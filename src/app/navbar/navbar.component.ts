@@ -14,13 +14,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class NavbarComponent implements OnInit {
   isScrolled = false;
+  isHeroVisible = true;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('scroll', () => {
-        this.isScrolled = window.scrollY > 50;
+        const scrollY = window.scrollY;
+        const heroHeight = window.innerHeight * 0.9; // 90vh hero section
+
+        this.isScrolled = scrollY > 50;
+        this.isHeroVisible = scrollY < heroHeight;
       });
     }
   }

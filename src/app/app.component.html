@@ -1,58 +1,287 @@
 <app-navbar></app-navbar>
 
 <main class="mt-[70px] min-h-[calc(100vh-70px)]">
-  <!-- Hero Carousel -->
+
+  <!-- Hero Section -->
   <div class="relative w-full h-[90vh] overflow-hidden">
-    <div
-      class="absolute inset-0 transition-opacity duration-1000"
-      *ngFor="let image of heroImages; let i = index"
-      [class.opacity-100]="i === currentSlide"
-      [class.opacity-0]="i !== currentSlide"
-    >
-      <!-- Blur-up Image -->
-      <img
-        [src]="image"
-        alt="Travel Destination"
-        class="w-full h-full object-cover lazy-image"
-        loading="lazy"
-        decoding="async"
-        (load)="onImageLoad($event)"
-      />
+    <div class="absolute inset-0 transition-opacity duration-1000" *ngFor="let image of heroImages; let i = index"
+      [class.opacity-100]="i === currentSlide" [class.opacity-0]="i !== currentSlide">
+      <img [src]="image" alt="Travel Destination" class="w-full h-full object-cover" />
     </div>
 
-    <!-- Overlay Content -->
-    <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center text-white px-6">
-      <h1 class="text-5xl md:text-6xl font-bold mb-4">Welcome to SkyBook</h1>
-      <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl">
-        Your gateway to amazing travel experiences. Book flights, hotels, and car rentals all in one place.
-      </p>
-      <div class="flex gap-4 flex-wrap justify-center">
+    <div
+      class="absolute inset-0 bg-black/40 flex flex-col items-start justify-center text-white px-6 md:px-20 lg:px-32">
+      <h1
+      class="font-extrabold mb-3 max-w-4xl text-left drop-shadow-2xl"
+      style="font-size: 3rem; line-height: 0.7;"
+    >
+      The world's best experiences
+      <span class="block mt-4">curated just for you</span>
+    </h1>
+    
+
+
+
+      <div class="mt-8">
         <button
-          class="flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg border-none cursor-pointer transition-all duration-300 bg-white text-indigo-600 shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
-        >
-          <mat-icon class="text-xl">search</mat-icon>
-          Search Flights
-        </button>
-        <button
-          class="flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg border-2 border-white cursor-pointer transition-all duration-300 bg-transparent text-white hover:bg-white hover:text-indigo-600 hover:-translate-y-0.5"
-        >
-          <mat-icon class="text-xl">explore</mat-icon>
-          Explore Destinations
+          class="flex items-center gap-2 px-8 py-4 rounded-xl font-thin text-sm bg-white text-black shadow-lg hover:shadow-xl transition w-[350px] md:w-[350px]">
+          <mat-icon>search</mat-icon>
+          Search flights for<span class="city-transition">{{currentCity }}</span>
         </button>
       </div>
     </div>
 
-    <!-- Slide Indicators -->
+
     <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
-      <button
-        *ngFor="let image of heroImages; let i = index"
-        (click)="goToSlide(i)"
-        class="w-3 h-3 rounded-full transition-all"
-        [class.bg-white]="i === currentSlide"
-        [class.bg-gray-400]="i !== currentSlide"
-      ></button>
+      <button *ngFor="let image of heroImages; let i = index" (click)="goToSlide(i)" class="w-3 h-3 rounded-full"
+        [class.bg-white]="i === currentSlide" [class.bg-gray-400]="i !== currentSlide"></button>
     </div>
   </div>
 
-  <router-outlet></router-outlet>
+  <!-- Features -->
+  <section class="py-16 text-center grid md:grid-cols-4 gap-8 px-6">
+    <div>
+      <div class="text-4xl mb-3">💎</div>
+      <h3 class="font-semibold text-lg">Only the finest</h3>
+      <p class="text-gray-600">We find the best so you don’t have to.</p>
+    </div>
+    <div>
+      <div class="text-4xl mb-3">💵</div>
+      <h3 class="font-semibold text-lg">Greed is good</h3>
+      <p class="text-gray-600">Lowest prices, last-minute availability & 24/7 support.</p>
+    </div>
+    <div>
+      <div class="text-4xl mb-3">💖</div>
+      <h3 class="font-semibold text-lg">Experience every flavour</h3>
+      <p class="text-gray-600">Tours, shows, games or museums – we have them all.</p>
+    </div>
+    <div>
+      <div class="text-4xl mb-3">😎</div>
+      <h3 class="font-semibold text-lg">No pain, only gain</h3>
+      <p class="text-gray-600">Didn’t love it? Get your money back.</p>
+    </div>
+  </section>
+
+  <!-- Top Destinations -->
+  <section class="py-16 bg-gray-50 px-6">
+    <h2 class="text-3xl font-bold text-center mb-10">Explore world’s top destinations</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/ny.jpg" alt="New York" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in New York</h4>
+          <p class="text-gray-500 text-sm">United States</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/london.jpg" alt="London" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in London</h4>
+          <p class="text-gray-500 text-sm">United Kingdom</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/dubai.jpg" alt="Dubai" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in Dubai</h4>
+          <p class="text-gray-500 text-sm">UAE</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/rome.jpg" alt="Rome" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in Rome</h4>
+          <p class="text-gray-500 text-sm">Italy</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/paris.jpg" alt="Paris" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in Paris</h4>
+          <p class="text-gray-500 text-sm">France</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden shadow-md">
+        <img src="assets/singapore.jpg" alt="Singapore" class="w-full h-40 object-cover">
+        <div class="p-4">
+          <h4 class="font-semibold">Things to do in Singapore</h4>
+          <p class="text-gray-500 text-sm">Singapore</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="py-16 px-6 bg-gradient-to-r from-purple-900 to-indigo-900 text-white">
+    <h2 class="text-3xl font-bold text-center mb-10">Millions love heading out with us 💖</h2>
+    <div class="flex gap-6 overflow-x-auto">
+      <div class="bg-white/10 rounded-xl p-6 w-80 shrink-0">
+        <img src="assets/madrid.jpg" alt="Royal Palace" class="w-full h-40 rounded-lg object-cover mb-4">
+        <h4 class="font-semibold">Deborah</h4>
+        <p class="text-sm opacity-80">Ireland – ⭐⭐⭐⭐⭐</p>
+        <p class="mt-2 text-sm">The Royal Palace is a feast for the eyes. Fair cost, lots of rooms, and no queues.</p>
+      </div>
+      <div class="bg-white/10 rounded-xl p-6 w-80 shrink-0">
+        <img src="assets/space.jpg" alt="Space Shuttle" class="w-full h-40 rounded-lg object-cover mb-4">
+        <h4 class="font-semibold">Kelly</h4>
+        <p class="text-sm opacity-80">USA – ⭐⭐⭐⭐</p>
+        <p class="mt-2 text-sm">Educational and fun. I even remembered the moon landing!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="py-16 px-6 text-center">
+    <h2 class="text-3xl font-bold mb-8">We have the best partners</h2>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-6 items-center">
+      <img src="assets/partners/versailles.png" alt="Versailles" class="mx-auto h-10">
+      <img src="assets/partners/dubai.png" alt="Dubai" class="mx-auto h-10">
+      <img src="assets/partners/opera.png" alt="Opera" class="mx-auto h-10">
+      <img src="assets/partners/bigbus.png" alt="Big Bus" class="mx-auto h-10">
+      <img src="assets/partners/merlin.png" alt="Merlin" class="mx-auto h-10">
+      <img src="assets/partners/ferrari.png" alt="Ferrari" class="mx-auto h-10">
+    </div>
+  </section>
+
+  <!-- App Promo -->
+  <section
+    class="py-16 px-6 bg-blue-50 flex flex-col md:flex-row items-center justify-between rounded-xl max-w-5xl mx-auto shadow-lg">
+    <div>
+      <h2 class="text-3xl font-bold mb-4">Get the SkyBook app, save up to 80%</h2>
+      <p class="text-gray-600">Exclusive deals, offline ticket access & live booking updates.</p>
+    </div>
+    <div class="mt-6 md:mt-0">
+      <img src="assets/qr.png" alt="QR Code" class="w-40 h-40">
+    </div>
+  </section>
+
+  <section class="py-20 px-6 bg-white">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800">We've served 42 million+ guests and we are here for
+        you</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <div class="flex flex-col items-center">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-7 h-7 text-green-500" fill="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12.845 2.372a.3.3 0 00-.551 0l-2.5 4.857-5.41.442a.3.3 0 00-.17.518l4.13 3.616-1.21 5.341a.3.3 0 00.44.318L12 14.885l4.636 2.579a.3.3 0 00.44-.318l-1.21-5.341 4.13-3.616a.3.3 0 00-.17-.518l-5.41-.442-2.5-4.857z">
+              </path>
+            </svg>
+            <span class="text-2xl font-bold text-gray-800">Trustpilot</span>
+          </div>
+          <img src="https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-4.5.svg" alt="4.3 stars"
+            class="h-8 mb-3" />
+          <p class="font-semibold text-gray-700">TrustScore 4.3 | <span class="underline cursor-pointer">44,124
+              reviews</span></p>
+          <p class="text-gray-600 mt-2 text-sm px-4">Real reviews of real experiences. Trusted by explorers everywhere.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNGRkVDODIiLz4KPHBhdGggZD0iTTM4LjA0ODUgMzguMzkxM0MyNy4zMzMgNDIuMzk2NyAyNC42NjY3IDQyLjM5NjcgMTUuOTUxNSAzOC4zOTEzQzE1LjM0NjcgMzguMTI2MSAxNS4zNDY3IDM3LjE2MzkgMTUuOTUxNSAzNi44OTg3QzI0LjY2NjcgMzIuODkzMyAyNy4zMzMzIDMyLjg5MzMgMzguMDUxNSAzNi44OTg3QzM4LjY1NjcgMzcuMTYzOSAzOC42NTY3IDM4LjEyNjEgMzguMDQ4NSAzOC4zOTEzWiIgZmlsbD0idXJscCgjYSkiLz4KPGVsbGlwc2UgY3g9IjQ1IiBjeT0iMjcuNSIgcng9IjUiIHJ5PSI3LjUiIGZpbGw9IiMwMDAwMDAiLz4KPGVsbGlwc2UgY3g9IjE5IiBjeT0iMjcuNSIgcng9IjUiIHJ5PSI3LjUiIGZpbGw9IiMwMDAwMDAiLz4KPHBhdGggZD0iTTQyIDI2LjVDNDEuMTUgMjguNSA0MS4zMzMzIDI4LjgzMzMgNDIgMjguNUM0Mi42NjY3IDI4LjE2NjcgNDIuODUgMjYuNSA0MiAyNi41WiIgZmlsbD0iI0ZGM0Q3QyIvPgo8cGF0aCBkPSJNNjAuNSAzMS40NTQ1QzU4LjM4ODkgMjkuOTQ5OSA1NS4zODg5IDI5LjQ0OTkgNTMuNSAzMC40NTQ1QzUxLjYxMTEgMzEuNDU5MSA0OS42MTExIDMyLjQ1OTEgNDggMzEuNDU0NUM0Ni4zODg5IDMwLjQ0OTkgNDQuODg4OSAyOC40NDk5IDQ0IDMwLjQ1NDVDNDMuMTEwOSA3LjQ1OTAzIDI5Ljg3NzYgNS4wNDE3NSAyMS41IDE3QzEyLjkxNjcgMTkuOTE2NyAxMy45MTY3IDI3LjQxNjcgMTUgMjguNUMxNi41IDI5LjUgMTcgMjcuNSAxNy41IDI1WiIgZmlsbD0idXJscCgjYikiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iYSIgeDE9IjI3IiB5MT0iMzcuMzQyNCIgeDI9IjI3IiB5Mj0iNDQuMjM1MSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNjE2MTYxIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzYxNjE2MSIgc3RvcC1vcGFjaXR5PSIwIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDE9IjQxLjA2NDgiIHkxPSIyMS42MTc3IiB4Mj0iMjguODM5NCIgeTI9IjM2LjAyMyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRDhDNzhGIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y0RjdGNyIvPgo8L2xpbmVhciBHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4="
+            alt="Happy customer icon" class="w-20 h-20 mb-3" />
+          <h3 class="font-bold text-xl mb-2 text-gray-800">42 million+</h3>
+          <p class="text-gray-600 text-sm px-4">Happy customers across 10,000+ experiences</p>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <div class="flex items-center justify-center gap-6 mb-3 h-20">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/TechCrunch_logo.svg" alt="TechCrunch Logo"
+              class="h-6" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo"
+              class="h-8" />
+          </div>
+          <h3 class="font-bold text-xl mb-2 text-gray-800">In the media</h3>
+          <p class="text-gray-600 text-sm px-4">Featured and recommended by the best brands</p>
+        </div>
+
+        <div class="flex flex-col items-center">
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMjguNSIgZmlsbD0iI0ZGRUM4MiIvPgo8cGF0aCBkPSJNMzIgNDNDMjEuNSA0MyAyMS41IDI5IDMyIDI5VjQzWiIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzQyNDI0MiIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0zMiA0M0M0Mi41IDQzIDQyLjUgMjkgMzIgMjlWNDNaIiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSIjNDI0MjQyIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik00Ni41IDQyVjM0QzQ2LjUgMzAuNSA0NC41IDI2LjUgNDAuNSAyNi41SDQwLjVDMzYuNSAyNi41IDM0LjUgMzAuNSAzNC41IDM0VjM3IiBzdHJva2U9IiM0MjQyNDIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxyZWN0IHg9IjM5LjUiIHk9IjQxLjUiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIiByeD0iMi41IiBmaWxsPSIjNDI0MjQyIi8+Cjwvc3ZnPg=="
+            alt="Help center icon" class="w-20 h-20 mb-3" />
+          <h3 class="font-bold text-xl mb-2 text-gray-800">24 x 7 help center</h3>
+          <p class="text-gray-600 text-sm px-4">Have a question? Live chat with local experts anywhere, anytime</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<footer class="bg-white border-t border-gray-200">
+  <div class="max-w-7xl mx-auto py-16 px-6">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+
+      <div class="col-span-2 md:col-span-1">
+        <a href="#" aria-label="Home">
+          <svg class="h-7 mb-8" viewBox="0 0 134 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M44.504 22.825c-1.373 0-2.583-.49-3.63-1.472a5.05 5.05 0 01-1.57-3.837c0-1.432.523-2.66 1.57-3.682a5.2 5.2 0 013.63-1.52c1.393 0 2.592.499 3.6 1.496a5.03 5.03 0 011.536 3.73c0 .3-.01.576-.03.828h-8.244c.14 1.01.623 1.77 1.448 2.282.826.51 1.833.766 3.023.766 1.289 0 2.44-.218 3.455-.654l.758 2.12c-.936.438-2.035.7-3.297.792a7.6 7.6 0 01-1.252.096zm.03-9.528c-1.14 0-2.03.354-2.672 1.064-.642.71-1.008 1.66-1.1 2.85h7.248c-.08-1.128-.464-2.043-1.152-2.744-.688-.7-1.637-1.056-2.832-1.056l.508-.014zM59.01 12.353h2.96v13.53h-2.96v-13.53zm-.088-3.936c0-.85.302-1.583.907-2.198C60.426 6 61.16 5.692 62.004 5.692c.844 0 1.577.308 2.192.923.615.615.923 1.348.923 2.198 0 .832-.308 1.556-.923 2.17-.615.616-1.348.924-2.192.924-.844 0-1.578-.308-2.184-.924a3.03 3.03 0 01-.907-2.17zM69.09 25.883h3.04V15.93h4.624v-2.7h-4.624V9.897c0-.75.203-1.3.61-1.648.405-.348.98-.522 1.723-.522.456 0 .88.06 1.272.18V5.44c-.6-.18-1.2-.27-1.8-.27-1.04 0-1.88.24-2.52.72-.64.48-.96 1.2-.96 2.16v4.037h-3.344v2.7H72.13v9.953h-3.04zM84.773 22.825c-1.373 0-2.583-.49-3.63-1.472a5.05 5.05 0 01-1.57-3.837c0-1.432.523-2.66 1.57-3.682a5.2 5.2 0 013.63-1.52c1.393 0 2.592.499 3.6 1.496a5.03 5.03 0 011.536 3.73c0 .3-.01.576-.03.828h-8.244c.14 1.01.623 1.77 1.448 2.282.826.51 1.833.766 3.023.766 1.289 0 2.44-.218 3.455-.654l.758 2.12c-.936.438-2.035.7-3.297.792a7.6 7.6 0 01-1.252.096zm.03-9.528c-1.14 0-2.03.354-2.672 1.064-.642.71-1.008 1.66-1.1 2.85h7.248c-.08-1.128-.464-2.043-1.152-2.744-.688-.7-1.637-1.056-2.832-1.056l.508-.014zM100.229 18.06c0-1.788-.56-3.273-1.68-4.453-1.12-.18-2.504-2.264-4.152-2.264-1.688 0-3.1.75-4.232 2.25-1.132-1.5-2.56-2.25-4.288-2.25-1.648 0-2.992.6-4.032 1.8s-1.56 2.7-1.56 4.5v7.82h3.04V18.3c0-1.1.28-1.9.84-2.6.56-.7 1.3-.9 2.2-.9.92 0 1.6.3 2.2.9.6.6.9 1.5.9 2.6v7.58h3.04V18.3c0-1.1.296-1.9.888-2.6.592-.7 1.352-1.05 2.28-1.05.928 0 1.672.35 2.232 1.05.56.7.84 1.5.84 2.6v7.58h3.04l-.032-7.82zM107.509 25.883h3.04V5.91h-3.04v19.973zM120.147 12.353c1.328 0 2.464.387 3.408 1.16V5.91h3.04v19.973h-2.8l-.208-2.31c-.96.88-2.1 1.32-3.4 1.32-1.36 0-2.5-.42-3.4-1.26-.9-.84-1.35-1.95-1.35-3.33 0-1.36.46-2.48 1.38-3.36.92-.88 2.06-1.32 3.42-1.32zm-.512 9.09c.84 0 1.5.24 2.1.72.6.48.9 1.17.9 2.07s-.3 1.59-.9 2.07c-.6.48-1.26.72-2.1.72-.8 0-1.4-.24-2-.72s-.8-1.17-.8-2.07.2-1.59.8-2.07c.5-.48 1.1-.72 2-.72zM31.91 16.518c0-5.26-4.15-9.527-9.26-9.527-5.11 0-9.26 4.266-9.26 9.527s4.15 9.527 9.26 9.527c5.11 0 9.26-4.266 9.26-9.527zm-15.56 0c0-3.483 2.82-6.312 6.3-6.312 3.48 0 6.3 2.829 6.3 6.312s-2.82 6.312-6.3 6.312c-3.48 0-6.3-2.829-6.3-6.312zM32.88 28.188l-1.99-1.32c-.02-.3.04-.6.04-.91 0-5.59-4.55-10.12-10.12-10.12-5.57 0-10.12 4.53-10.12 10.12 0 .31.05.61.05.91l-2 1.32C-1.02 24.338.7 17.028 6.53 12.638 12.37 8.248 20.48 8.258 26.3 12.638c5.83 4.39 7.55 11.7 3.58 15.55z"
+              fill="#673DE6"></path>
+          </svg>
+        </a>
+        <div class="p-2 border border-gray-200 rounded-lg flex items-center gap-4 w-fit">
+          <img src="https://cdn.headout.com/common/qrcode/new-generic-qr-code.png" alt="QR Code" class="w-20 h-20">
+          <div class="pr-2">
+            <p class="font-semibold text-gray-800 text-sm">Download the Headout app</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">Get Help 24/7</h4>
+        <ul class="space-y-3 text-gray-700">
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Help center</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Chat with us</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Call us</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">supportskybook.com</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">Cities</h4>
+        <ul class="space-y-3 text-gray-700">
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">New York</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Las Vegas</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Rome</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Paris</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">London</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Dubai</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Barcelona</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">+243 more</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">Headout</h4>
+        <ul class="space-y-3 text-gray-700">
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Our story</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Careers</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Newsroom</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Company blog</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Travel blog</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">Partners</h4>
+        <ul class="space-y-3 text-gray-700 mb-8">
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Experience providers</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Affiliates</a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition-colors">Creators & influencers</a></li>
+        </ul>
+        <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">We Accept</h4>
+        <div class="flex flex-wrap items-center gap-2">
+          <img src="assets/payment_logos/Visa Payment Card.svg" alt="Visa" class="h-6">
+          <img src="assets/payment_logos/MasterCard.svg" alt="Mastercard" class="h-6">
+          <img src="assets/payment_logos/Apple Pay.jpg" alt="Apple Pay" class="h-6">
+          <img src="assets/payment_logos/Google Pay Icon 2020.svg" alt="Google Pay" class="h-5">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</footer>
