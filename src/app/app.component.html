@@ -1,9 +1,9 @@
-<app-navbar></app-navbar>
 
-<main class="mt-[70px] min-h-[calc(100vh-70px)]">
+<app-navbar></app-navbar>
+<main class="min-h-[calc(100vh-70px)]">
 
   <!-- Hero Section -->
-  <div class="relative w-full h-[90vh] overflow-hidden">
+  <div class="relative w-full h-[100vh] overflow-hidden">
     <div class="absolute inset-0 transition-opacity duration-1000" *ngFor="let image of heroImages; let i = index"
       [class.opacity-100]="i === currentSlide" [class.opacity-0]="i !== currentSlide">
       <img [src]="image" alt="Travel Destination" class="w-full h-full object-cover" />
@@ -11,22 +11,19 @@
 
     <div
       class="absolute inset-0 bg-black/40 flex flex-col items-start justify-center text-white px-6 md:px-20 lg:px-32">
-      <h1
-      class="font-extrabold mb-3 max-w-4xl text-left drop-shadow-2xl"
-      style="font-size: 3rem; line-height: 0.7;"
-    >
-      The world's best experiences
-      <span class="block mt-4">curated just for you</span>
-    </h1>
-    
+      <h1 class="font-extrabold mb-3 max-w-4xl text-left drop-shadow-2xl" style="font-size: 3rem; line-height: 0.7;">
+        The world's best experiences
+        <span class="block mt-4">curated just for you</span>
+      </h1>
+
 
 
 
       <div class="mt-8">
         <button
           class="flex items-center gap-2 px-8 py-4 rounded-xl font-thin text-sm bg-white text-black shadow-lg hover:shadow-xl transition w-[350px] md:w-[350px]">
-          <mat-icon>search</mat-icon>
-          Search flights for<span class="city-transition">{{currentCity }}</span>
+          <mat-icon>flight_takeoff</mat-icon>
+          Find flights for <span class="city-transition">{{ currentCity }}</span>
         </button>
       </div>
     </div>
@@ -39,77 +36,113 @@
   </div>
 
   <!-- Features -->
-  <section class="py-16 text-center grid md:grid-cols-4 gap-8 px-6">
-    <div>
-      <div class="text-4xl mb-3">💎</div>
-      <h3 class="font-semibold text-lg">Only the finest</h3>
-      <p class="text-gray-600">We find the best so you don’t have to.</p>
-    </div>
-    <div>
-      <div class="text-4xl mb-3">💵</div>
-      <h3 class="font-semibold text-lg">Greed is good</h3>
-      <p class="text-gray-600">Lowest prices, last-minute availability & 24/7 support.</p>
-    </div>
-    <div>
-      <div class="text-4xl mb-3">💖</div>
-      <h3 class="font-semibold text-lg">Experience every flavour</h3>
-      <p class="text-gray-600">Tours, shows, games or museums – we have them all.</p>
-    </div>
-    <div>
-      <div class="text-4xl mb-3">😎</div>
-      <h3 class="font-semibold text-lg">No pain, only gain</h3>
-      <p class="text-gray-600">Didn’t love it? Get your money back.</p>
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-center">
+
+      <div class="p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="text-5xl mb-4">💎</div>
+        <h3 class="font-bold text-xl mb-2 text-gray-800">Only the finest</h3>
+        <p class="text-gray-600">We find the best so you don’t have to.</p>
+      </div>
+
+      <div class="p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="text-5xl mb-4">💵</div>
+        <h3 class="font-bold text-xl mb-2 text-gray-800">Greed is good</h3>
+        <p class="text-gray-600">
+          Lowest prices, last-minute availability & 24/7 support.
+        </p>
+      </div>
+
+      <div class="p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="text-5xl mb-4">💖</div>
+        <h3 class="font-bold text-xl mb-2 text-gray-800">
+          Experience every flavour
+        </h3>
+        <p class="text-gray-600">
+          Tours, shows, games or museums – we have them all.
+        </p>
+      </div>
+
+      <div class="p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="text-5xl mb-4">😎</div>
+        <h3 class="font-bold text-xl mb-2 text-gray-800">No pain, only gain</h3>
+        <p class="text-gray-600">Didn’t love it? Get your money back.</p>
+      </div>
+
     </div>
   </section>
 
+
   <!-- Top Destinations -->
-  <section class="py-16 bg-gray-50 px-6">
-    <h2 class="text-3xl font-bold text-center mb-10">Explore world’s top destinations</h2>
+  <section class="py-16 bg-gradient-to-b from-gray-50 to-white px-6">
+    <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">
+      Discover the world’s most exciting cities
+    </h2>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/ny.jpg" alt="New York" class="w-full h-40 object-cover">
+
+      <!-- Tokyo -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/city-4807268_1920.jpg" alt="Tokyo" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in New York</h4>
-          <p class="text-gray-500 text-sm">United States</p>
+          <h4 class="font-semibold text-gray-800">Adventures in Tokyo</h4>
+          <p class="text-gray-500 text-sm">Japan</p>
         </div>
       </div>
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/london.jpg" alt="London" class="w-full h-40 object-cover">
+
+      <!-- Barcelona -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/statue-7943963_1280.jpg" alt="Barcelona" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in London</h4>
-          <p class="text-gray-500 text-sm">United Kingdom</p>
+          <h4 class="font-semibold text-gray-800">Unwind in Barcelona</h4>
+          <p class="text-gray-500 text-sm">Spain</p>
         </div>
       </div>
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/dubai.jpg" alt="Dubai" class="w-full h-40 object-cover">
+
+      <!-- Cape Town -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/cape-town-1562907_1280.jpg" alt="Cape Town" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in Dubai</h4>
-          <p class="text-gray-500 text-sm">UAE</p>
+          <h4 class="font-semibold text-gray-800">Experiences in Cape Town</h4>
+          <p class="text-gray-500 text-sm">South Africa</p>
         </div>
       </div>
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/rome.jpg" alt="Rome" class="w-full h-40 object-cover">
+
+      <!-- Istanbul -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/mosque-279015_1280.jpg" alt="Istanbul" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in Rome</h4>
-          <p class="text-gray-500 text-sm">Italy</p>
+          <h4 class="font-semibold text-gray-800">Culture in Istanbul</h4>
+          <p class="text-gray-500 text-sm">Turkey</p>
         </div>
       </div>
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/paris.jpg" alt="Paris" class="w-full h-40 object-cover">
+
+      <!-- Sydney -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/australia-4338882_1280.jpg" alt="Sydney" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in Paris</h4>
-          <p class="text-gray-500 text-sm">France</p>
+          <h4 class="font-semibold text-gray-800">Fun in Sydney</h4>
+          <p class="text-gray-500 text-sm">Australia</p>
         </div>
       </div>
-      <div class="rounded-xl overflow-hidden shadow-md">
-        <img src="assets/singapore.jpg" alt="Singapore" class="w-full h-40 object-cover">
+
+      <!-- Rio de Janeiro -->
+      <div
+        class="city-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+        <img src="assets/cities/paraty-2608027_1280.jpg" alt="Rio de Janeiro" class="w-full h-44 object-cover">
         <div class="p-4">
-          <h4 class="font-semibold">Things to do in Singapore</h4>
-          <p class="text-gray-500 text-sm">Singapore</p>
+          <h4 class="font-semibold text-gray-800">Vibes of Rio</h4>
+          <p class="text-gray-500 text-sm">Brazil</p>
         </div>
       </div>
+
     </div>
   </section>
+
 
   <!-- Reviews -->
   <section class="py-16 px-6 bg-gradient-to-r from-purple-900 to-indigo-900 text-white">
@@ -213,9 +246,9 @@
 
 <footer class="bg-white border-t border-gray-200">
   <div class="max-w-7xl mx-auto py-16 px-6">
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
 
-      <div class="col-span-2 md:col-span-1">
+      <!-- <div class="col-span-2 md:col-span-1">
         <a href="#" aria-label="Home">
           <svg class="h-7 mb-8" viewBox="0 0 134 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -229,7 +262,7 @@
             <p class="font-semibold text-gray-800 text-sm">Download the Headout app</p>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div>
         <h4 class="font-semibold text-gray-500 tracking-wider uppercase mb-4 text-sm">Get Help 24/7</h4>
