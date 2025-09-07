@@ -10,6 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar/navbar.component";
 
@@ -51,6 +52,7 @@ interface FlightResult {
     MatSelectModule,
     MatCardModule,
     MatChipsModule,
+    MatAutocompleteModule,
     NavbarComponent
   ],
   templateUrl: './search-flights.component.html',
@@ -66,15 +68,98 @@ export class SearchFlightsComponent implements OnInit {
     class: 'economy'
   };
 
-  isRoundTrip = false;
+  isRoundTrip = false; // Default to one way
   searchResults: FlightResult[] = [];
   isSearching = false;
   showResults = false;
 
-  popularDestinations = [
-    'New York', 'London', 'Paris', 'Tokyo', 'Dubai', 'Singapore',
-    'Sydney', 'Rome', 'Barcelona', 'Amsterdam', 'Los Angeles', 'Miami'
+  popularDestinations = [{
+    "city_name": "Paris",
+    "country_name": "France",
+    "airport_name": "Paris Charles de Gaulle Airport",
+    "airport_code": "CDG",
+    "longitude": 2.55,
+    "latitude": 49.01
+  },
+  {
+    "city_name": "London",
+    "country_name": "United Kingdom",
+    "airport_name": "London Heathrow Airport",
+    "airport_code": "LHR",
+    "longitude": -0.46,
+    "latitude": 51.47
+  },
+  {
+    "city_name": "New York",
+    "country_name": "United States",
+    "airport_name": "New York John F. Kennedy International Airport",
+    "airport_code": "JFK",
+    "longitude": -73.78,
+    "latitude": 40.64
+  },
+  {
+    "city_name": "Tokyo",
+    "country_name": "Japan",
+    "airport_name": "Tokyo Narita Airport",
+    "airport_code": "NRT",
+    "longitude": 139.78,
+    "latitude": 35.76
+  },
+  {
+    "city_name": "Dubai",
+    "country_name": "United Arab Emirates",
+    "airport_name": "Dubai International Airport",
+    "airport_code": "DXB",
+    "longitude": 55.36,
+    "latitude": 25.27
+  },
+  {
+    "city_name": "Bangkok",
+    "country_name": "Thailand",
+    "airport_name": "Bangkok Suvarnabhumi Airport",
+    "airport_code": "BKK",
+    "longitude": 100.78,
+    "latitude": 13.95
+  },
+  {
+    "city_name": "Sydney",
+    "country_name": "Australia",
+    "airport_name": "Sydney International Airport",
+    "airport_code": "SYD",
+    "longitude": 151.18,
+    "latitude": -33.94
+  },
+  {
+    "city_name": "Rome",
+    "country_name": "Italy",
+    "airport_name": "Rome Fiumicino Airport",
+    "airport_code": "FCO",
+    "longitude": 12.25,
+    "latitude": 41.80
+  },
+  {
+    "city_name": "Barcelona",
+    "country_name": "Spain",
+    "airport_name": "Barcelona Airport",
+    "airport_code": "BCN",
+    "longitude": 2.16,
+    "latitude": 41.29
+  },
+  {
+    "city_name": "Istanbul",
+    "country_name": "Turkey",
+    "airport_name": "Istanbul Airport",
+    "airport_code": "IST",
+    "longitude": 28.81,
+    "latitude": 40.89
+  }
   ];
+
+  filteredFromCities: string[] = [];
+  filteredToCities: string[] = [];
+
+  // Custom dropdown state
+  showPassengerDropdown = false;
 
   flightClasses = [
     { value: 'economy', label: 'Economy' },
@@ -86,22 +171,59 @@ export class SearchFlightsComponent implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-
-    // Initialize with today's date
     this.searchForm.departureDate = new Date();
+    // Default to one way trip
+    this.isRoundTrip = false;
+    this.filteredFromCities = this.popularDestinations.map(city => city.city_name);
+    this.filteredToCities = this.popularDestinations.map(city => city.city_name);
   }
 
-  swapLocations(): void {
+  swapLocations() {
     const temp = this.searchForm.from;
     this.searchForm.from = this.searchForm.to;
     this.searchForm.to = temp;
   }
 
-  toggleTripType(): void {
-    this.isRoundTrip = !this.isRoundTrip;
-    if (!this.isRoundTrip) {
-      this.searchForm.returnDate = null;
-    }
+  // Automatically determine trip type based on date selection
+  updateTripType(): void {
+    this.isRoundTrip = !!(this.searchForm.returnDate);
+  }
+
+  // Clear return date and make it one way
+  clearReturnDate(): void {
+    this.searchForm.returnDate = null;
+    this.updateTripType();
+  }
+
+  filterFromCities(): void {
+    this.filteredFromCities = this.popularDestinations.map(city => city.city_name).filter(city =>
+      city.toLowerCase().includes(this.searchForm.from.toLowerCase())
+    );
+  }
+
+  filterToCities(): void {
+    this.filteredToCities = this.popularDestinations.map(city => city.city_name).filter(city =>
+      city.toLowerCase().includes(this.searchForm.to.toLowerCase())
+    );
+  }
+
+  // Custom passenger dropdown methods
+  togglePassengerDropdown(): void {
+    this.showPassengerDropdown = !this.showPassengerDropdown;
+  }
+
+  closePassengerDropdown(): void {
+    this.showPassengerDropdown = false;
+  }
+
+  updatePassengerCount(count: number): void {
+    this.searchForm.passengers = count;
+  }
+
+  onPassengerSliderChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const value = parseInt(target.value, 10);
+    this.updatePassengerCount(value);
   }
 
   selectDestination(destination: string, type: 'from' | 'to'): void {
@@ -129,6 +251,9 @@ export class SearchFlightsComponent implements OnInit {
   }
 
   private isFormValid(): boolean {
+    // Update trip type based on current date selection
+    this.updateTripType();
+
     return !!(
       this.searchForm.from &&
       this.searchForm.to &&
@@ -166,10 +291,12 @@ export class SearchFlightsComponent implements OnInit {
   selectFlight(flight: FlightResult): void {
     console.log('Selected flight:', flight);
     // Here you would typically navigate to booking or store the selection
-    alert(`Selected ${flight.airline} ${flight.flightNumber} for $${flight.price}`);
+    alert(`Selected ${flight.airline} ${flight.flightNumber} for $${flight.price}, ${flight.class}`);
   }
 
   goBack(): void {
     this.router.navigate(['/']);
   }
+
+
 }

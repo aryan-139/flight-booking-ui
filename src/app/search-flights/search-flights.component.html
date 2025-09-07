@@ -1,139 +1,294 @@
 <app-navbar></app-navbar>
-<div class="min-h-screen bg-gray-50 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Search Form -->
-        <mat-card class="mb-8 shadow-lg">
-            <mat-card-content class="p-6">
-                <!-- Trip Type Toggle -->
-                <div class="flex justify-center mb-6">
-                    <div class="bg-gray-100 rounded-lg p-1 flex">
-                        <button (click)="toggleTripType()"
-                            [class]="!isRoundTrip ? 'bg-white shadow-sm' : 'text-gray-600'"
-                            class="px-6 py-2 rounded-md font-medium transition-all">
-                            One Way
-                        </button>
-                        <button (click)="toggleTripType()"
-                            [class]="isRoundTrip ? 'bg-white shadow-sm' : 'text-gray-600'"
-                            class="px-6 py-2 rounded-md font-medium transition-all">
-                            Round Trip
-                        </button>
-                    </div>
-                </div>
 
-                <form (ngSubmit)="searchFlights()" class="space-y-6">
-                    <!-- From/To Locations -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+<!-- Blue gradient background -->
+<div class="bg-gray-50">
+
+    <div class="pt-20 absolute top-0 left-0 w-full h-[48vh] bg-gradient-to-b from-[#07111d] via-[#0a2342] to-[#123c6a]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+            <!-- Search Card -->
+            <div class=" relative bg-white shadow-lg rounded-2xl p-6 mb-10 border border-gray-100">
+
+
+                <!-- Search Form -->
+                <form (ngSubmit)="searchFlights()" class="space-y-8">
+
+                    <!-- From/To -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <!-- From -->
-                        <mat-form-field appearance="outline" class="w-full">
+                        <mat-form-field appearance="outline" class="w-full rounded-xl">
                             <mat-label>From</mat-label>
-                            <input matInput [(ngModel)]="searchForm.from" name="from" placeholder="Departure city"
-                                required>
+                            <input type="text" matInput [matAutocomplete]="fromAuto" [(ngModel)]="searchForm.from"
+                                name="from" placeholder="Departure city" required (input)="filterFromCities()">
                             <mat-icon matSuffix>flight_takeoff</mat-icon>
+                            <mat-autocomplete #fromAuto="matAutocomplete">
+                                <mat-option *ngFor="let city of filteredFromCities; let i = index" [value]="city"
+                                    class="py-3">
+                                    <div class="flex justify-between items-center w-full px-2 py-1">
+                                        <div class="flex-1">
+                                            <div class="text-lg text-gray-900">
+                                                {{ city }}, {{ popularDestinations[i].country_name }}
+                                            </div>
+                                            <div
+                                                class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
+                                                {{ popularDestinations[i].airport_name }}
+                                            </div>
+                                        </div>
+                                        <div class="text-gray-500 text-right whitespace-nowrap ml-4">
+                                            {{ popularDestinations[i].airport_code }}
+                                        </div>
+                                    </div>
+                                </mat-option>
+
+                            </mat-autocomplete>
                         </mat-form-field>
 
-                        <!-- Swap Button -->
-                        <div class="flex justify-center">
+                        <!-- Swap -->
+                        <div class="flex justify-center items-end">
                             <button type="button" (click)="swapLocations()"
-                                class="p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors">
+                                class="p-3 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors shadow">
                                 <mat-icon class="text-blue-600">swap_horiz</mat-icon>
                             </button>
                         </div>
 
                         <!-- To -->
-                        <mat-form-field appearance="outline" class="w-full">
+                        <mat-form-field appearance="outline" class="w-full rounded-xl">
                             <mat-label>To</mat-label>
-                            <input matInput [(ngModel)]="searchForm.to" name="to" placeholder="Destination city"
-                                required>
+                            <input type="text" matInput [matAutocomplete]="toAuto" [(ngModel)]="searchForm.to" name="to"
+                                placeholder="Destination city" required (input)="filterToCities()">
                             <mat-icon matSuffix>flight_land</mat-icon>
+                            <mat-autocomplete #toAuto="matAutocomplete">
+                                <mat-option *ngFor="let city of filteredToCities; let i = index" [value]="city"
+                                    class="py-3">
+                                    <div class="flex justify-between items-center px-2 py-1">
+                                        <div class="flex-1">
+                                            <div class="text-lg text-gray-900">{{ city }}, {{
+                                                popularDestinations[filteredToCities.indexOf(city)].country_name }}
+                                            </div>
+                                            <div
+                                                class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
+                                                {{
+                                                popularDestinations[filteredToCities.indexOf(city)].airport_name }}
+                                            </div>
+                                        </div>
+                                        <div class="text-gray-500 text-right whitespace-nowrap ml-4">{{
+                                            popularDestinations[filteredToCities.indexOf(city)].airport_code }}
+                                        </div>
+                                    </div>
+                                </mat-option>
+                            </mat-autocomplete>
                         </mat-form-field>
                     </div>
 
-                    <!-- Popular Destinations -->
-                    <div class="space-y-3">
-                        <h3 class="text-sm font-medium text-gray-700">Popular Destinations</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <mat-chip *ngFor="let destination of popularDestinations"
-                                (click)="selectDestination(destination, 'to')" class="cursor-pointer hover:bg-blue-100">
-                                {{ destination }}
-                            </mat-chip>
+
+                    <!-- Dates & Passengers -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        <!-- Departure -->
+                        <div class="relative w-full">
+                            <label class="block text-sm font-medium mb-1 text-gray-600">Departure</label>
+
+                            <!-- Always show block (empty until selected) -->
+                            <div (click)="departurePicker.open()"
+                                class="cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500">
+
+                                <ng-container *ngIf="searchForm.departureDate; else emptyDeparture">
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="text-3xl font-bold">
+                                            {{ searchForm.departureDate | date:'dd' }}
+                                        </span>
+                                        <span class="text-lg font-medium">
+                                            {{ searchForm.departureDate | date:"MMM''yy" }}
+                                        </span>
+                                    </div>
+                                    <div class="text-gray-500 text-sm">
+                                        {{ searchForm.departureDate | date:'EEEE' }}
+                                    </div>
+                                </ng-container>
+
+                                <!-- Default empty view -->
+                                <ng-template #emptyDeparture>
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="text-3xl font-bold text-gray-400">--</span>
+                                        <span class="text-lg font-medium text-gray-400">MMM'yy</span>
+                                    </div>
+                                    <div class="text-gray-400 text-sm">Select Date</div>
+                                </ng-template>
+                            </div>
+
+                            <!-- Hidden Material Input + Picker -->
+                            <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
+                                name="departureDate" class="hidden" (dateChange)="updateTripType()" />
+                            <mat-datepicker #departurePicker [xPosition]="'start'"
+                                [yPosition]="'below'"></mat-datepicker>
+                        </div>
+
+
+                        <!-- Return -->
+                        <div class="relative w-full mb-4">
+                            <label class="block text-sm font-medium mb-1 text-gray-600">Return</label>
+
+                            <!-- Always show block (empty until selected) -->
+                            <div (click)="returnPicker.open()"
+                                class="cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500 relative">
+
+                                <ng-container *ngIf="searchForm.returnDate; else emptyReturn">
+                                    <div class="flex items-baseline space-x-2 pr-8">
+                                        <span class="text-3xl font-bold">
+                                            {{ searchForm.returnDate | date:'dd' }}
+                                        </span>
+                                        <span class="text-lg font-medium">
+                                            {{ searchForm.returnDate | date:"MMM''yy" }}
+                                        </span>
+                                    </div>
+                                    <div class="text-gray-500 text-sm">
+                                        {{ searchForm.returnDate | date:'EEEE' }}
+                                    </div>
+
+                                    <!-- Clear button -->
+                                    <button type="button" (click)="clearReturnDate(); $event.stopPropagation()"
+                                        class="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                        title="Clear return date">
+                                        <mat-icon class="text-gray-400 hover:text-gray-600 text-sm">close</mat-icon>
+                                    </button>
+                                </ng-container>
+
+                                <!-- Default empty view -->
+                                <ng-template #emptyReturn>
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="text-3xl font-bold text-gray-400">--</span>
+                                        <span class="text-lg font-medium text-gray-400">MM'YY</span>
+                                    </div>
+                                    <div class="text-gray-400 text-sm">Select Date</div>
+                                </ng-template>
+                            </div>
+
+                            <!-- Hidden Material Input + Picker -->
+                            <input matInput [matDatepicker]="returnPicker" [(ngModel)]="searchForm.returnDate"
+                                name="returnDate" class="hidden" (dateChange)="updateTripType()" />
+                            <mat-datepicker #returnPicker [xPosition]="'start'" [yPosition]="'below'"></mat-datepicker>
+                        </div>
+
+
+                        <!-- Passengers -->
+                        <div class="relative w-full">
+                            <label class="block text-sm font-medium mb-1 text-gray-600">Passengers</label>
+
+                            <!-- Custom styled dropdown matching date picker -->
+                            <div class="relative">
+                                <div (click)="togglePassengerDropdown()"
+                                    class="w-full border rounded-xl px-4 py-5 shadow-sm hover:border-blue-500 cursor-pointer bg-white">
+
+                                    <!-- Custom display -->
+                                    <div class="flex items-baseline space-x-2">
+                                        <span class="text-3xl font-bold text-gray-900">
+                                            {{ searchForm.passengers }}
+                                        </span>
+                                        <span class="text-lg font-medium text-gray-900">
+                                            {{ searchForm.passengers === 1 ? 'Passenger' : 'Passengers' }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Custom dropdown arrow -->
+                                    <div class="absolute top-1/2 right-3 transform -translate-y-1/2">
+                                        <mat-icon class="text-gray-400 transition-transform"
+                                            [class.rotate-180]="showPassengerDropdown">keyboard_arrow_down</mat-icon>
+                                    </div>
+                                </div>
+
+                                <!-- Custom dropdown panel -->
+                                <div *ngIf="showPassengerDropdown"
+                                    class="absolute top-full left-0 right-0 mt-2 bg-white border rounded-xl shadow-lg z-50 p-6">
+
+                                    <!-- Passenger Count Slider -->
+                                    <div class="mb-6">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <span class="text-sm font-medium text-gray-700">Passengers</span>
+                                            <span class="text-lg font-bold text-blue-600">{{ searchForm.passengers
+                                                }}</span>
+                                        </div>
+
+                                        <!-- Slider -->
+                                        <div class="relative">
+                                            <input type="range" min="1" max="9" [value]="searchForm.passengers"
+                                                (input)="onPassengerSliderChange($event)"
+                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+
+                                            <!-- Slider ticks -->
+                                            <div class="flex justify-between mt-2 text-xs text-gray-500">
+                                                <span>1</span>
+                                                <span>2</span>
+                                                <span>3</span>
+                                                <span>4</span>
+                                                <span>5</span>
+                                                <span>6</span>
+                                                <span>7</span>
+                                                <span>8</span>
+                                                <span>9</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Flight Class Toggle -->
+                                    <div class="mb-4">
+                                        <span class="text-sm font-medium text-gray-700 block mb-3">Flight Class</span>
+
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button *ngFor="let flightClass of flightClasses"
+                                                (click)="searchForm.class = flightClass.value" [class]="searchForm.class === flightClass.value 
+                                                    ? 'bg-blue-600 text-white border-blue-600' 
+                                                    : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'"
+                                                class="px-3 py-2 rounded-lg border text-sm font-medium transition-colors">
+                                                {{ flightClass.label }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Done Button -->
+                                    <div class="flex justify-end">
+                                        <button (click)="closePassengerDropdown()"
+                                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                            Done
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dates and Passengers -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Departure Date -->
-                        <mat-form-field appearance="outline" class="w-full">
-                            <mat-label>Departure Date</mat-label>
-                            <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
-                                name="departureDate" required>
-                            <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #departurePicker></mat-datepicker>
-                        </mat-form-field>
 
-                        <!-- Return Date (only for round trip) -->
-                        <mat-form-field appearance="outline" class="w-full" *ngIf="isRoundTrip">
-                            <mat-label>Return Date</mat-label>
-                            <input matInput [matDatepicker]="returnPicker" [(ngModel)]="searchForm.returnDate"
-                                name="returnDate" [required]="isRoundTrip">
-                            <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
-                            <mat-datepicker #returnPicker></mat-datepicker>
-                        </mat-form-field>
 
-                        <!-- Passengers -->
-                        <mat-form-field appearance="outline" class="w-full">
-                            <mat-label>Passengers</mat-label>
-                            <mat-select [(ngModel)]="searchForm.passengers" name="passengers">
-                                <mat-option *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [value]="num">
-                                    {{ num }} {{ num === 1 ? 'Passenger' : 'Passengers' }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-
-                    <!-- Class Selection -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <mat-form-field appearance="outline" class="w-full">
-                            <mat-label>Class</mat-label>
-                            <mat-select [(ngModel)]="searchForm.class" name="class">
-                                <mat-option *ngFor="let flightClass of flightClasses" [value]="flightClass.value">
-                                    {{ flightClass.label }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
 
                     <!-- Search Button -->
-                    <div class="flex justify-center pt-4">
-                        <button type="submit" [disabled]="isSearching"
-                            class="px-12 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2">
+                    <div class="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-1/2">
+                        <button type="submit" [disabled]="isSearching" class="px-12 py-3 rounded-full font-semibold text-white transition-all flex items-center space-x-2
+                                 bg-gradient-to-r from-[#4facfe] to-[#0061ff] hover:from-[#3b8dff] hover:to-[#004de6]
+                                 disabled:opacity-80 disabled:cursor-not-allowed shadow-lg hover:shadow-xl">
+
                             <mat-icon *ngIf="!isSearching">search</mat-icon>
                             <mat-icon *ngIf="isSearching" class="animate-spin">refresh</mat-icon>
-                            <span>{{ isSearching ? 'Searching...' : 'Search Flights' }}</span>
+                            <span>{{ isSearching ? 'Searching...' : 'SEARCH' }}</span>
                         </button>
                     </div>
+
                 </form>
-            </mat-card-content>
-        </mat-card>
-
-        <!-- Loading State -->
-        <div *ngIf="isSearching" class="text-center py-12">
-            <mat-icon class="text-6xl text-blue-600 animate-spin mb-4">flight</mat-icon>
-            <h3 class="text-xl font-medium text-gray-900 mb-2">Searching for flights...</h3>
-            <p class="text-gray-600">Finding the best deals for your trip</p>
-        </div>
-
-        <!-- Search Results -->
-        <div *ngIf="showResults && !isSearching" class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-gray-900">Available Flights</h2>
-                <span class="text-sm text-gray-600">{{ searchResults.length }} flights found</span>
             </div>
 
-            <div class="grid gap-4">
-                <mat-card *ngFor="let flight of searchResults" class="hover:shadow-lg transition-shadow cursor-pointer"
-                    (click)="selectFlight(flight)">
-                    <mat-card-content class="p-6">
+
+            <!-- Results Section -->
+            <div *ngIf="showResults && !isSearching" class="space-y-6">
+                <div class="flex items-center justify-between text-white">
+                    <h2 class="text-2xl text-black font-bold">Flights from {{ searchForm.from }} to {{ searchForm.to
+                        }}{{ !isRoundTrip ? '' : ', and back' }}</h2>
+                    <span class="text-sm opacity-80">{{ searchResults.length }} flights found</span>
+                </div>
+
+                <div class="grid gap-4">
+                    <div *ngFor="let flight of searchResults"
+                        class="bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl cursor-pointer transition transform hover:-translate-y-1 flight-card"
+                        (click)="selectFlight(flight)">
                         <div class="flex items-center justify-between">
+
                             <!-- Flight Info -->
                             <div class="flex-1">
                                 <div class="flex items-center space-x-4 mb-3">
@@ -150,7 +305,7 @@
                                     </div>
 
                                     <!-- Flight Path -->
-                                    <div class="flex-1 flex items-center justify-center">
+                                    <div class="flex-1 flex flex-col items-center">
                                         <div class="flex items-center space-x-2">
                                             <div class="w-8 h-0.5 bg-gray-300"></div>
                                             <mat-icon class="text-gray-400">flight</mat-icon>
@@ -172,24 +327,18 @@
 
                             <!-- Price -->
                             <div class="text-right ml-6">
-                                <div class="text-3xl font-bold text-blue-600">${{ flight.price }}</div>
+                                <div class="text-3xl font-bold text-blue-600">₹{{ flight.price }}</div>
                                 <div class="text-sm text-gray-600">per person</div>
                                 <button
-                                    class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                     Select
                                 </button>
                             </div>
                         </div>
-                    </mat-card-content>
-                </mat-card>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- No Results -->
-        <div *ngIf="showResults && searchResults.length === 0 && !isSearching" class="text-center py-12">
-            <mat-icon class="text-6xl text-gray-400 mb-4">flight_takeoff</mat-icon>
-            <h3 class="text-xl font-medium text-gray-900 mb-2">No flights found</h3>
-            <p class="text-gray-600">Try adjusting your search criteria</p>
         </div>
     </div>
 </div>
