@@ -89,8 +89,14 @@
                             <label class="block text-sm font-medium mb-1 text-gray-600">Departure</label>
 
                             <!-- Always show block (empty until selected) -->
-                            <div (click)="departurePicker.open()"
-                                class="cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500">
+                            <div
+                                class="relative cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500">
+                                <!-- Hidden Material Input + Picker -->
+                                <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
+                                    name="departureDate"
+                                    (click)="departurePicker.open()"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    (dateChange)="updateTripType()" readonly />
 
                                 <ng-container *ngIf="searchForm.departureDate; else emptyDeparture">
                                     <div class="flex items-baseline space-x-2">
@@ -115,10 +121,6 @@
                                     <div class="text-gray-400 text-sm">Select Date</div>
                                 </ng-template>
                             </div>
-
-                            <!-- Hidden Material Input + Picker -->
-                            <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
-                                name="departureDate" class="hidden" (dateChange)="updateTripType()" />
                             <mat-datepicker #departurePicker [xPosition]="'start'"
                                 [yPosition]="'below'"></mat-datepicker>
                         </div>
@@ -130,7 +132,12 @@
 
                             <!-- Always show block (empty until selected) -->
                             <div (click)="returnPicker.open()"
-                                class="cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500 relative">
+                                class="relative cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500">
+                                <!-- Hidden Material Input + Picker -->
+                                <input matInput [matDatepicker]="returnPicker" [(ngModel)]="searchForm.returnDate"
+                                    name="returnDate"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    (dateChange)="updateTripType()" readonly />
 
                                 <ng-container *ngIf="searchForm.returnDate; else emptyReturn">
                                     <div class="flex items-baseline space-x-2 pr-8">
@@ -147,7 +154,7 @@
 
                                     <!-- Clear button -->
                                     <button type="button" (click)="clearReturnDate(); $event.stopPropagation()"
-                                        class="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                        class="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors z-20"
                                         title="Clear return date">
                                         <mat-icon class="text-gray-400 hover:text-gray-600 text-sm">close</mat-icon>
                                     </button>
@@ -162,10 +169,6 @@
                                     <div class="text-gray-400 text-sm">Select Date</div>
                                 </ng-template>
                             </div>
-
-                            <!-- Hidden Material Input + Picker -->
-                            <input matInput [matDatepicker]="returnPicker" [(ngModel)]="searchForm.returnDate"
-                                name="returnDate" class="hidden" (dateChange)="updateTripType()" />
                             <mat-datepicker #returnPicker [xPosition]="'start'" [yPosition]="'below'"></mat-datepicker>
                         </div>
 

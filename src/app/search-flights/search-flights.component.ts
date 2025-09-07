@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { LocationService, Airport } from '../utils/location';
 
+
 interface FlightSearch {
   from: string;
   to: string;
