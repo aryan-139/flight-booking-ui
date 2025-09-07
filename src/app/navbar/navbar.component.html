@@ -1,0 +1,60 @@
+<nav
+  class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 transition-all duration-300"
+  [ngClass]="{ 'bg-white shadow-md': isScrolled }"
+>
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-[70px]">
+    <!-- Logo / Brand -->
+    <div
+      class="flex items-center gap-2 cursor-pointer transition-transform duration-200 hover:scale-105"
+      (click)="scrollToTop()"
+    >
+      <mat-icon class="text-3xl text-orange-600">flight</mat-icon>
+      <span class="text-2xl font-bold text-slate-900">SkyBook</span>
+    </div>
+
+    <!-- Navigation -->
+    <div class="hidden md:flex items-center gap-1">
+      <a
+        routerLink="/"
+        class="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-600 font-medium transition-all duration-200 hover:text-orange-600 hover:bg-orange-50"
+      >
+        <mat-icon class="text-xl">home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a
+        routerLink="/flights"
+        class="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-600 font-medium transition-all duration-200 hover:text-orange-600 hover:bg-orange-50"
+      >
+        <mat-icon class="text-xl">flight_takeoff</mat-icon>
+        <span>Flights</span>
+      </a>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2">
+      <button
+        mat-raised-button
+        class="hidden md:flex items-center gap-2 bg-orange-600 text-white rounded-lg px-6 py-3 font-semibold transition-all duration-200 hover:bg-orange-700 shadow-md hover:shadow-lg"
+      >
+        <mat-icon class="text-xl">search</mat-icon>
+        <span>Search Flights</span>
+      </button>
+
+      <button
+        mat-icon-button
+        class="text-slate-500 transition-all duration-200 hover:text-orange-600 hover:bg-orange-50"
+        matTooltip="Notifications"
+      >
+        <mat-icon class="text-2xl">notifications</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        class="text-slate-500 transition-all duration-200 hover:text-orange-600 hover:bg-orange-50"
+        matTooltip="User Account"
+      >
+        <mat-icon class="text-2xl">account_circle</mat-icon>
+      </button>
+    </div>
+  </div>
+</nav>

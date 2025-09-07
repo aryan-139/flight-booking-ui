@@ -1,0 +1,10 @@
+// All styles converted to Tailwind classes in the HTML template
+// This file can be kept minimal or removed if no additional custom styles are needed
+
+// Dark mode support using Tailwind's dark: prefix
+@media (prefers-color-scheme: dark) {
+    :host {
+        // Dark mode styles are handled via Tailwind's dark: prefix in the HTML
+        // If you need additional dark mode styles, add them here
+    }
+}
