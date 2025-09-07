@@ -4,6 +4,10 @@
     transition: all 0.3s ease;
 }
 
+.mat-form-field-appearance-outline .mat-input-element:focus {
+    outline: none;
+}
+
 // Custom animations
 @keyframes fadeInUp {
     from {
@@ -42,7 +46,86 @@ mat-card:hover {
 // Form field customizations
 mat-form-field {
     .mat-mdc-form-field-subscript-wrapper {
-        display: none;
+        display: none !important;
+        outline: none;
+    }
+
+    // Hide the underline line
+    .mat-mdc-form-field-underline {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-bottom-align {
+        display: none !important;
+    }
+
+    // Remove any border lines
+    .mat-mdc-form-field-outline {
+        display: none !important;
+    }
+
+    // Ensure clean appearance
+    .mat-mdc-form-field-outline-start,
+    .mat-mdc-form-field-outline-end,
+    .mat-mdc-form-field-outline-gap {
+        display: none !important;
+    }
+
+    // Additional Material Design 3 specific selectors
+    .mat-mdc-form-field-outline-thick {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-outline-thick .mat-mdc-form-field-outline-start,
+    .mat-mdc-form-field-outline-thick .mat-mdc-form-field-outline-end,
+    .mat-mdc-form-field-outline-thick .mat-mdc-form-field-outline-gap {
+        display: none !important;
+    }
+
+    // Hide any remaining borders
+    .mat-mdc-form-field-outline-start,
+    .mat-mdc-form-field-outline-end,
+    .mat-mdc-form-field-outline-gap {
+        border: none !important;
+        display: none !important;
+    }
+
+    // Target the input field directly
+    .mat-mdc-input-element {
+        border: none !important;
+        outline: none !important;
+    }
+}
+
+// Global override for Material form fields
+::ng-deep mat-form-field {
+    .mat-mdc-form-field-outline {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-outline-start,
+    .mat-mdc-form-field-outline-end,
+    .mat-mdc-form-field-outline-gap {
+        display: none !important;
+        border: none !important;
+    }
+
+    .mat-mdc-form-field-underline {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-bottom-align {
+        display: none !important;
+    }
+
+    // For fill appearance
+    .mat-mdc-form-field-fill {
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .mat-mdc-form-field-infix {
+        border: none !important;
     }
 }
 

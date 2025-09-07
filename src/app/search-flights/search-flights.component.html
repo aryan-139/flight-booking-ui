@@ -16,7 +16,7 @@
                     <!-- From/To -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                         <!-- From -->
-                        <mat-form-field appearance="outline" class="w-full rounded-xl">
+                        <mat-form-field appearance="fill" class=" rounded-xl">
                             <mat-label>From</mat-label>
                             <input type="text" matInput [matAutocomplete]="fromAuto" [(ngModel)]="searchForm.from"
                                 name="from" placeholder="Departure city" required (input)="filterFromCities()">
@@ -52,7 +52,7 @@
                         </div>
 
                         <!-- To -->
-                        <mat-form-field appearance="outline" class="w-full rounded-xl">
+                        <mat-form-field appearance="fill" class=" rounded-xl">
                             <mat-label>To</mat-label>
                             <input type="text" matInput [matAutocomplete]="toAuto" [(ngModel)]="searchForm.to" name="to"
                                 placeholder="Destination city" required (input)="filterToCities()">

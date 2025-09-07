@@ -13,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar/navbar.component";
+import { LocationService, Airport } from '../utils/location';
 
 interface FlightSearch {
   from: string;
@@ -73,7 +74,7 @@ export class SearchFlightsComponent implements OnInit {
   isSearching = false;
   showResults = false;
 
-  popularDestinations = [{
+  popularDestinations: Airport[] = [{
     "city_name": "Paris",
     "country_name": "France",
     "airport_name": "Paris Charles de Gaulle Airport",
@@ -152,6 +153,14 @@ export class SearchFlightsComponent implements OnInit {
     "airport_code": "IST",
     "longitude": 28.81,
     "latitude": 40.89
+  },
+  {
+    "city_name": "Bangalore",
+    "country_name": "India",
+    "airport_name": "Bangalore International Airport",
+    "airport_code": "BLR",
+    "longitude": 77.60,
+    "latitude": 12.97
   }
   ];
 
@@ -170,13 +179,21 @@ export class SearchFlightsComponent implements OnInit {
 
   constructor(private router: Router) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.searchForm.departureDate = new Date();
+
+    // Populate nearest airport based on geolocation
+    this.searchForm.from = await LocationService.getNearestAirportWithFallback(
+      this.popularDestinations,
+      'New York'
+    );
+
     // Default to one way trip
     this.isRoundTrip = false;
     this.filteredFromCities = this.popularDestinations.map(city => city.city_name);
     this.filteredToCities = this.popularDestinations.map(city => city.city_name);
   }
+
 
   swapLocations() {
     const temp = this.searchForm.from;
