@@ -1,0 +1,83 @@
+// Custom styles for search flights component
+
+.city-transition {
+    transition: all 0.3s ease;
+}
+
+// Custom animations
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flight-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+// Hover effects
+mat-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+// Custom button styles
+.search-button {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+}
+
+// Form field customizations
+mat-form-field {
+    .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+    }
+}
+
+// Chip hover effects
+mat-chip {
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+// Loading animation
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .flight-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .flight-path {
+        margin: 1rem 0;
+    }
+}

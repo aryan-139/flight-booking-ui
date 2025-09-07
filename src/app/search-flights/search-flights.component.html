@@ -1,0 +1,195 @@
+<app-navbar></app-navbar>
+<div class="min-h-screen bg-gray-50 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Search Form -->
+        <mat-card class="mb-8 shadow-lg">
+            <mat-card-content class="p-6">
+                <!-- Trip Type Toggle -->
+                <div class="flex justify-center mb-6">
+                    <div class="bg-gray-100 rounded-lg p-1 flex">
+                        <button (click)="toggleTripType()"
+                            [class]="!isRoundTrip ? 'bg-white shadow-sm' : 'text-gray-600'"
+                            class="px-6 py-2 rounded-md font-medium transition-all">
+                            One Way
+                        </button>
+                        <button (click)="toggleTripType()"
+                            [class]="isRoundTrip ? 'bg-white shadow-sm' : 'text-gray-600'"
+                            class="px-6 py-2 rounded-md font-medium transition-all">
+                            Round Trip
+                        </button>
+                    </div>
+                </div>
+
+                <form (ngSubmit)="searchFlights()" class="space-y-6">
+                    <!-- From/To Locations -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <!-- From -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>From</mat-label>
+                            <input matInput [(ngModel)]="searchForm.from" name="from" placeholder="Departure city"
+                                required>
+                            <mat-icon matSuffix>flight_takeoff</mat-icon>
+                        </mat-form-field>
+
+                        <!-- Swap Button -->
+                        <div class="flex justify-center">
+                            <button type="button" (click)="swapLocations()"
+                                class="p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors">
+                                <mat-icon class="text-blue-600">swap_horiz</mat-icon>
+                            </button>
+                        </div>
+
+                        <!-- To -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>To</mat-label>
+                            <input matInput [(ngModel)]="searchForm.to" name="to" placeholder="Destination city"
+                                required>
+                            <mat-icon matSuffix>flight_land</mat-icon>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Popular Destinations -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-medium text-gray-700">Popular Destinations</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <mat-chip *ngFor="let destination of popularDestinations"
+                                (click)="selectDestination(destination, 'to')" class="cursor-pointer hover:bg-blue-100">
+                                {{ destination }}
+                            </mat-chip>
+                        </div>
+                    </div>
+
+                    <!-- Dates and Passengers -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Departure Date -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Departure Date</mat-label>
+                            <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
+                                name="departureDate" required>
+                            <mat-datepicker-toggle matSuffix [for]="departurePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #departurePicker></mat-datepicker>
+                        </mat-form-field>
+
+                        <!-- Return Date (only for round trip) -->
+                        <mat-form-field appearance="outline" class="w-full" *ngIf="isRoundTrip">
+                            <mat-label>Return Date</mat-label>
+                            <input matInput [matDatepicker]="returnPicker" [(ngModel)]="searchForm.returnDate"
+                                name="returnDate" [required]="isRoundTrip">
+                            <mat-datepicker-toggle matSuffix [for]="returnPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #returnPicker></mat-datepicker>
+                        </mat-form-field>
+
+                        <!-- Passengers -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Passengers</mat-label>
+                            <mat-select [(ngModel)]="searchForm.passengers" name="passengers">
+                                <mat-option *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [value]="num">
+                                    {{ num }} {{ num === 1 ? 'Passenger' : 'Passengers' }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Class Selection -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Class</mat-label>
+                            <mat-select [(ngModel)]="searchForm.class" name="class">
+                                <mat-option *ngFor="let flightClass of flightClasses" [value]="flightClass.value">
+                                    {{ flightClass.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Search Button -->
+                    <div class="flex justify-center pt-4">
+                        <button type="submit" [disabled]="isSearching"
+                            class="px-12 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2">
+                            <mat-icon *ngIf="!isSearching">search</mat-icon>
+                            <mat-icon *ngIf="isSearching" class="animate-spin">refresh</mat-icon>
+                            <span>{{ isSearching ? 'Searching...' : 'Search Flights' }}</span>
+                        </button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- Loading State -->
+        <div *ngIf="isSearching" class="text-center py-12">
+            <mat-icon class="text-6xl text-blue-600 animate-spin mb-4">flight</mat-icon>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">Searching for flights...</h3>
+            <p class="text-gray-600">Finding the best deals for your trip</p>
+        </div>
+
+        <!-- Search Results -->
+        <div *ngIf="showResults && !isSearching" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-gray-900">Available Flights</h2>
+                <span class="text-sm text-gray-600">{{ searchResults.length }} flights found</span>
+            </div>
+
+            <div class="grid gap-4">
+                <mat-card *ngFor="let flight of searchResults" class="hover:shadow-lg transition-shadow cursor-pointer"
+                    (click)="selectFlight(flight)">
+                    <mat-card-content class="p-6">
+                        <div class="flex items-center justify-between">
+                            <!-- Flight Info -->
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-4 mb-3">
+                                    <div class="text-lg font-semibold text-gray-900">{{ flight.airline }}</div>
+                                    <div class="text-sm text-gray-600">{{ flight.flightNumber }}</div>
+                                    <div class="text-sm text-gray-500">{{ flight.class | titlecase }}</div>
+                                </div>
+
+                                <div class="flex items-center space-x-6">
+                                    <!-- Departure -->
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-gray-900">{{ flight.departureTime }}</div>
+                                        <div class="text-sm text-gray-600">{{ flight.from }}</div>
+                                    </div>
+
+                                    <!-- Flight Path -->
+                                    <div class="flex-1 flex items-center justify-center">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-8 h-0.5 bg-gray-300"></div>
+                                            <mat-icon class="text-gray-400">flight</mat-icon>
+                                            <div class="w-8 h-0.5 bg-gray-300"></div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-1">{{ flight.duration }}</div>
+                                        <div class="text-xs text-gray-500" *ngIf="flight.stops > 0">
+                                            {{ flight.stops }} {{ flight.stops === 1 ? 'stop' : 'stops' }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Arrival -->
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-gray-900">{{ flight.arrivalTime }}</div>
+                                        <div class="text-sm text-gray-600">{{ flight.to }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="text-right ml-6">
+                                <div class="text-3xl font-bold text-blue-600">${{ flight.price }}</div>
+                                <div class="text-sm text-gray-600">per person</div>
+                                <button
+                                    class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    Select
+                                </button>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+
+        <!-- No Results -->
+        <div *ngIf="showResults && searchResults.length === 0 && !isSearching" class="text-center py-12">
+            <mat-icon class="text-6xl text-gray-400 mb-4">flight_takeoff</mat-icon>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">No flights found</h3>
+            <p class="text-gray-600">Try adjusting your search criteria</p>
+        </div>
+    </div>
+</div>
