@@ -531,12 +531,11 @@ export class SearchFlightsComponent implements OnInit {
 
   selectFlight(flight: FlightResult): void {
     console.log('Selected flight:', flight);
-    // Here you would typically navigate to booking or store the selection
-    alert(`Selected ${flight.airline} ${flight.flight_number} for ₹${flight.price}, ${flight.cabin_class}`);
-  }
+    // Navigate to booking page with flight data
+    this.router.navigate(['/booking', flight.flight_id], {
+      state: { selectedFlight: flight }
+    });
 
-  goBack(): void {
-    this.router.navigate(['/']);
   }
 
   // Helper method to format duration from minutes to hours and minutes
