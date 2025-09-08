@@ -22,20 +22,20 @@
                                 name="from" placeholder="Departure city" required (input)="filterFromCities()">
                             <mat-icon matSuffix>flight_takeoff</mat-icon>
                             <mat-autocomplete #fromAuto="matAutocomplete">
-                                <mat-option *ngFor="let city of filteredFromCities; let i = index" [value]="city"
+                                <mat-option *ngFor="let airport of filteredFromCities" [value]="airport.city_name"
                                     class="py-3">
                                     <div class="flex justify-between items-center w-full px-2 py-1">
                                         <div class="flex-1">
                                             <div class="text-lg text-gray-900">
-                                                {{ city }}, {{ popularDestinations[i].country_name }}
+                                                {{ airport.city_name }}, {{ airport.country_name }}
                                             </div>
                                             <div
                                                 class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                {{ popularDestinations[i].airport_name }}
+                                                {{ airport.airport_name }}
                                             </div>
                                         </div>
                                         <div class="text-gray-500 text-right whitespace-nowrap ml-4">
-                                            {{ popularDestinations[i].airport_code }}
+                                            {{ airport.airport_code }}
                                         </div>
                                     </div>
                                 </mat-option>
@@ -58,21 +58,20 @@
                                 placeholder="Destination city" required (input)="filterToCities()">
                             <mat-icon matSuffix>flight_land</mat-icon>
                             <mat-autocomplete #toAuto="matAutocomplete">
-                                <mat-option *ngFor="let city of filteredToCities; let i = index" [value]="city"
+                                <mat-option *ngFor="let airport of filteredToCities" [value]="airport.city_name"
                                     class="py-3">
                                     <div class="flex justify-between items-center px-2 py-1">
                                         <div class="flex-1">
-                                            <div class="text-lg text-gray-900">{{ city }}, {{
-                                                popularDestinations[filteredToCities.indexOf(city)].country_name }}
+                                            <div class="text-lg text-gray-900">{{ airport.city_name }}, {{
+                                                airport.country_name }}
                                             </div>
                                             <div
                                                 class="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
-                                                {{
-                                                popularDestinations[filteredToCities.indexOf(city)].airport_name }}
+                                                {{ airport.airport_name }}
                                             </div>
                                         </div>
                                         <div class="text-gray-500 text-right whitespace-nowrap ml-4">{{
-                                            popularDestinations[filteredToCities.indexOf(city)].airport_code }}
+                                            airport.airport_code }}
                                         </div>
                                     </div>
                                 </mat-option>
@@ -93,8 +92,7 @@
                                 class="relative cursor-pointer border rounded-xl px-4 py-3 shadow-sm hover:border-blue-500">
                                 <!-- Hidden Material Input + Picker -->
                                 <input matInput [matDatepicker]="departurePicker" [(ngModel)]="searchForm.departureDate"
-                                    name="departureDate"
-                                    (click)="departurePicker.open()"
+                                    name="departureDate" (click)="departurePicker.open()"
                                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     (dateChange)="updateTripType()" readonly />
 
