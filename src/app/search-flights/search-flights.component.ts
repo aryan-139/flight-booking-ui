@@ -14,30 +14,18 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { LocationService, Airport } from '../utils/location';
+import { FlightService, FlightSearchRequest, FlightResult } from '../services/flight.service';
 
 
 interface FlightSearch {
-  from: string;
-  to: string;
+  from: string; // Airport code (e.g., "HYD", "BOM")
+  to: string; // Airport code (e.g., "DEL", "BLR")
   departureDate: Date | null;
   returnDate: Date | null;
   passengers: number;
   class: string;
 }
 
-interface FlightResult {
-  id: string;
-  airline: string;
-  flightNumber: string;
-  from: string;
-  to: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration: string;
-  price: number;
-  stops: number;
-  class: string;
-}
 
 @Component({
   selector: 'app-search-flights',
@@ -67,8 +55,12 @@ export class SearchFlightsComponent implements OnInit {
     departureDate: null,
     returnDate: null,
     passengers: 1,
-    class: 'economy'
+    class: 'Economy'
   };
+
+  // Display values for the UI (city names)
+  fromDisplay: string = '';
+  toDisplay: string = '';
 
   isRoundTrip = false; // Default to one way
   searchResults: FlightResult[] = [];
@@ -324,22 +316,32 @@ export class SearchFlightsComponent implements OnInit {
   showPassengerDropdown = false;
 
   flightClasses = [
-    { value: 'economy', label: 'Economy' },
-    { value: 'premium', label: 'Premium Economy' },
-    { value: 'business', label: 'Business' },
-    { value: 'first', label: 'First Class' }
+    { value: 'Economy', label: 'Economy' },
+    { value: 'Premium', label: 'Premium Economy' },
+    { value: 'Business', label: 'Business' },
+    { value: 'First', label: 'First Class' }
   ];
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private flightService: FlightService
+  ) { }
 
   async ngOnInit(): Promise<void> {
     this.searchForm.departureDate = new Date();
 
+    // Load airports from API
+    this.loadAirports();
+
     // Populate nearest airport based on geolocation
-    this.searchForm.from = await LocationService.getNearestAirportWithFallback(
+    const nearestAirport = await LocationService.getNearestAirportWithFallback(
       this.popularDestinations,
       'New York'
     );
+    this.fromDisplay = nearestAirport;
+    // Find the airport code for the nearest airport
+    const airport = this.popularDestinations.find(a => a.city_name === nearestAirport);
+    this.searchForm.from = airport ? airport.airport_code : 'JFK';
 
     // Default to one way trip
     this.isRoundTrip = false;
@@ -347,11 +349,33 @@ export class SearchFlightsComponent implements OnInit {
     this.filteredToCities = [...this.popularDestinations];
   }
 
+  private loadAirports(): void {
+    this.popularDestinations = this.popularDestinations;
+    // this.flightService.getPopularDestinations().subscribe({
+    //   next: (airports) => {
+    //     this.popularDestinations = airports;
+    //     this.filteredFromCities = [...this.popularDestinations];
+    //     this.filteredToCities = [...this.popularDestinations];
+    //     console.log('Airports loaded successfully:', airports);
+    //   },
+    //   error: (error) => {
+    //     console.error('Failed to load airports:', error);
+    //     // Keep using the hardcoded airports as fallback
+    //     console.log('Using fallback airports');
+    //   }
+    // });
+  }
+
 
   swapLocations() {
-    const temp = this.searchForm.from;
+    const tempCode = this.searchForm.from;
+    const tempDisplay = this.fromDisplay;
+
     this.searchForm.from = this.searchForm.to;
-    this.searchForm.to = temp;
+    this.fromDisplay = this.toDisplay;
+
+    this.searchForm.to = tempCode;
+    this.toDisplay = tempDisplay;
   }
 
   // Automatically determine trip type based on date selection
@@ -367,13 +391,13 @@ export class SearchFlightsComponent implements OnInit {
 
   filterFromCities(): void {
     this.filteredFromCities = this.popularDestinations.filter(airport =>
-      airport.city_name.toLowerCase().includes(this.searchForm.from.toLowerCase())
+      airport.city_name.toLowerCase().includes(this.fromDisplay.toLowerCase())
     );
   }
 
   filterToCities(): void {
     this.filteredToCities = this.popularDestinations.filter(airport =>
-      airport.city_name.toLowerCase().includes(this.searchForm.to.toLowerCase())
+      airport.city_name.toLowerCase().includes(this.toDisplay.toLowerCase())
     );
   }
 
@@ -396,11 +420,13 @@ export class SearchFlightsComponent implements OnInit {
     this.updatePassengerCount(value);
   }
 
-  selectDestination(destination: string, type: 'from' | 'to'): void {
+  selectDestination(airport: Airport, type: 'from' | 'to'): void {
     if (type === 'from') {
-      this.searchForm.from = destination;
+      this.searchForm.from = airport.airport_code;
+      this.fromDisplay = airport.city_name;
     } else {
-      this.searchForm.to = destination;
+      this.searchForm.to = airport.airport_code;
+      this.toDisplay = airport.city_name;
     }
   }
 
@@ -412,12 +438,44 @@ export class SearchFlightsComponent implements OnInit {
     this.isSearching = true;
     this.showResults = false;
 
-    // Simulate API call
-    setTimeout(() => {
-      this.searchResults = this.generateMockResults();
-      this.isSearching = false;
-      this.showResults = true;
-    }, 2000);
+    // Prepare search request
+    const searchRequest: FlightSearchRequest = {
+      origin: this.searchForm.from,
+      destination: this.searchForm.to,
+      depart_date: this.searchForm.departureDate!.toISOString().split('T')[0],
+      return_date: this.searchForm.returnDate ? this.searchForm.returnDate.toISOString().split('T')[0] : undefined,
+      adults: this.searchForm.passengers,
+      cabin: this.searchForm.class,
+      page_size: 100,
+      page_number: 1
+    };
+    console.log('Search Request:', searchRequest);
+
+    // Make API call
+    this.flightService.searchFlights(searchRequest).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.searchResults = response.data.flights;
+          this.isSearching = false;
+          this.showResults = true;
+          console.log('Flight search successful:', response);
+        } else {
+          console.error('API returned error:', response.message);
+          this.isSearching = false;
+          this.searchResults = this.generateMockResults();
+          this.showResults = true;
+          alert(`API Error: ${response.message}. Showing mock results for demonstration.`);
+        }
+      },
+      error: (error) => {
+        console.error('Flight search failed:', error);
+        this.isSearching = false;
+        // Fallback to mock results for development
+        this.searchResults = this.generateMockResults();
+        this.showResults = true;
+        alert('API call failed. Showing mock results for demonstration.');
+      }
+    });
   }
 
   private isFormValid(): boolean {
@@ -433,25 +491,38 @@ export class SearchFlightsComponent implements OnInit {
   }
 
   private generateMockResults(): FlightResult[] {
-    const airlines = ['American Airlines', 'Delta', 'United', 'Lufthansa', 'Emirates', 'British Airways'];
+    const airlines = ['Air India', 'IndiGo', 'SpiceJet', 'Vistara', 'GoAir', 'AirAsia'];
     const mockResults: FlightResult[] = [];
 
     for (let i = 0; i < 6; i++) {
       const departureHour = 6 + (i * 2);
       const arrivalHour = departureHour + Math.floor(Math.random() * 8) + 2;
+      const departureDate = this.searchForm.departureDate!.toISOString().split('T')[0];
+      const arrivalDate = this.searchForm.returnDate ? this.searchForm.returnDate.toISOString().split('T')[0] : departureDate;
+
+      // Create ISO 8601 formatted times
+      const departureTime = `${departureDate}T${departureHour.toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}:00Z`;
+      const arrivalTime = `${arrivalDate}T${arrivalHour.toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}:00Z`;
+
+      // Calculate duration in minutes
+      const durationMinutes = (arrivalHour - departureHour) * 60 + Math.floor(Math.random() * 60);
 
       mockResults.push({
-        id: `flight-${i + 1}`,
+        flight_id: 1000 + i,
+        flight_number: `${airlines[Math.floor(Math.random() * airlines.length)]} - ${Math.floor(Math.random() * 9000) + 1000}`,
         airline: airlines[Math.floor(Math.random() * airlines.length)],
-        flightNumber: `${Math.floor(Math.random() * 9000) + 1000}`,
-        from: this.searchForm.from,
-        to: this.searchForm.to,
-        departureTime: `${departureHour.toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-        arrivalTime: `${arrivalHour.toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-        duration: `${Math.floor(Math.random() * 8) + 2}h ${Math.floor(Math.random() * 60)}m`,
-        price: Math.floor(Math.random() * 800) + 200,
-        stops: Math.floor(Math.random() * 3),
-        class: this.searchForm.class
+        origin: this.searchForm.from,
+        destination: this.searchForm.to,
+        departure_time: departureTime,
+        arrival_time: arrivalTime,
+        duration: durationMinutes,
+        price: Math.floor(Math.random() * 5000) + 2000,
+        seats_available: Math.floor(Math.random() * 50) + 10,
+        cabin_class: this.searchForm.class,
+        total_seats: Math.floor(Math.random() * 50) + 10,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        dynamic_price: null
       });
     }
 
@@ -461,11 +532,28 @@ export class SearchFlightsComponent implements OnInit {
   selectFlight(flight: FlightResult): void {
     console.log('Selected flight:', flight);
     // Here you would typically navigate to booking or store the selection
-    alert(`Selected ${flight.airline} ${flight.flightNumber} for $${flight.price}, ${flight.class}`);
+    alert(`Selected ${flight.airline} ${flight.flight_number} for ₹${flight.price}, ${flight.cabin_class}`);
   }
 
   goBack(): void {
     this.router.navigate(['/']);
+  }
+
+  // Helper method to format duration from minutes to hours and minutes
+  formatDuration(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  }
+
+  // Helper method to format time from ISO string to HH:MM format
+  formatTime(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
   }
 
 
