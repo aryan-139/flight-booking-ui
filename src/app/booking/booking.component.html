@@ -1,76 +1,239 @@
 <app-navbar></app-navbar>
 
-<div class="min-h-screen bg-gray-50 py-8 mt-12">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <button (click)="goBack()" class="flex items-center text-blue-600 hover:text-blue-800 mb-4">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Back to Search Results
-            </button>
-            <h1 class="text-3xl font-bold text-gray-900">Complete Your Booking</h1>
-            <p class="text-gray-600 mt-2">Review your flight details and complete your reservation</p>
-        </div>
+<div class="bg-gray-50">
+    <div class="min-h-screen bg-gray-50 py-8 mt-12 relative z-10 ">
+        <div
+            class="pt-20 absolute top-0 left-0 w-full h-[48vh] bg-gradient-to-b from-[#07111d] via-[#0a2342] to-[#123c6a]">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 ">
 
-        <!-- Flight Details Card -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8" *ngIf="selectedFlight">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Selected Flight</h2>
-            <div class="border rounded-lg p-4">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h3 class="text-lg font-medium">{{ selectedFlight.airline }} {{ selectedFlight.flight_number }}
-                        </h3>
-                        <p class="text-sm text-gray-600">{{ selectedFlight.cabin_class }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-2xl font-bold text-blue-600">₹{{ selectedFlight.price }}</p>
-                        <p class="text-sm text-gray-600">per person</p>
-                    </div>
-                </div>
+                <!-- LEFT: Flight Details + Cancellation -->
+                <div class="lg:col-span-3">
 
-                <div class="flex items-center justify-between">
-                    <div class="text-center">
-                        <p class="text-2xl font-bold">{{ selectedFlight.departure_time | date:'HH:mm' }}</p>
-                        <p class="text-sm text-gray-600">{{ selectedFlight.destination }}</p>
-                    </div>
+                    <!-- Flight Details Card -->
+                    <div class="bg-white shadow-md rounded-lg border border-gray-200 overflow-hidden"
+                        *ngIf="selectedFlight">
+                        <div class="flex">
+                            <!-- thin left teal accent -->
+                            <div class="w-1 bg-[#2aa88f]"></div>
 
-                    <div class="flex-1 mx-4">
-                        <div class="flex items-center justify-center">
-                            <div class="w-8 h-0.5 bg-gray-300"></div>
-                            <svg class="w-5 h-5 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
-                                </path>
-                            </svg>
-                            <div class="w-8 h-0.5 bg-gray-300"></div>
+                            <div class="flex-1 p-6">
+                                <!-- Top row: route / date / meta -->
+                                <div class="flex items-start justify-between">
+                                    <div class="pr-6">
+                                        <p class="text-2xl font-extrabold tracking-tight">
+                                            {{ getCityNameFromCode(selectedFlight.data.origin) }} → {{
+                                            getCityNameFromCode(selectedFlight.data.destination) }}
+                                        </p>
+
+                                        <div class="mt-3 flex items-center gap-3">
+                                            <!-- date badge -->
+                                            <span
+                                                class="bg-[#FAE9C8] text-sm text-gray-800 px-3 py-1 rounded-md font-medium">
+                                                {{ selectedFlight.data.date ? (selectedFlight.data.date | date:'EEEE,
+                                                MMM d') : '' }}
+                                            </span>
+
+                                            <!-- stop / duration -->
+                                            <span class="text-sm text-gray-600">
+                                                {{ selectedFlight.data.stops ? (selectedFlight.data.stops + ' Stop' +
+                                                (selectedFlight.data.stops>1? 's':'')) : 'Non Stop' }}
+                                                ·
+                                                {{ formatDuration(selectedFlight.data.duration) }}
+                                            </span>
+                                        </div>
+
+                                        <!-- airline + flight number -->
+                                        <div class="mt-3 flex items-center gap-3">
+                                            <!-- optional logo if present -->
+                                            <img *ngIf="selectedFlight.data.airline_logo"
+                                                [src]="selectedFlight.data.airline_logo"
+                                                alt="{{ selectedFlight.data.airline }}"
+                                                class="w-8 h-8 object-contain" />
+                                            <span class="text-base font-semibold">
+                                                {{ selectedFlight.data.airline }}
+                                            </span>
+                                            <span class="text-sm text-gray-500"> {{ selectedFlight.data.flight_number }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right flex flex-col items-end gap-2">
+                                        <span class="bg-[#6FCFB0] text-white px-3 py-1 text-xs rounded-md">
+                                            CANCELLATION FEES APPLY
+                                        </span>
+                                        <a class="text-blue-600 text-sm" href="#" (click)="$event.preventDefault()">View
+                                            Fare Rules</a>
+                                        <div class="text-sm text-gray-700">
+                                            {{ selectedFlight.data.cabin_family || 'Economy' }} &nbsp;
+                                            <span class="text-blue-600 font-semibold">&gt; {{
+                                                selectedFlight.data.cabin_class }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- main timing panel -->
+                                <div class="mt-4 bg-gray-50 border rounded p-4">
+                                    <div class="max-w-2xl w-full font-sans">
+                                        <div
+                                            class="flex justify-between items-start bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                            <div class="flex items-start gap-3">
+                                                <div class="flex flex-col items-center h-full mt-1">
+
+                                                    <div class="flex-1 border-l-2 border-dashed border-gray-300 my-1">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span class="font-bold text-sm">
+                                                        {{ formatTime(selectedFlight.data.departure_time) }}
+                                                    </span>
+                                                    <span class="text-gray-400 text-lg">○</span>
+                                                    <span class="font-bold">
+                                                        {{getCityNameFromCode(selectedFlight.data.origin)}}
+                                                    </span>
+                                                    <span class="text-gray-600">
+                                                        . {{getAirportNameFromCode(selectedFlight.data.origin)}}
+                                                    </span>
+
+                                                    <p class="text-sm text-gray-500 m-2">
+                                                        {{formatDuration(selectedFlight.data.duration)}}
+                                                    </p>
+                                                    <span class="font-bold text-sm">
+                                                        {{formatTime(selectedFlight.data.arrival_time)}}
+                                                    </span>
+                                                    <span class="text-gray-400 text-lg">○</span>
+                                                    <span class="font-bold">
+                                                        {{getCityNameFromCode(selectedFlight.data.destination)}}
+                                                    </span>
+                                                    <span class="text-gray-600">
+                                                        . {{getAirportNameFromCode(selectedFlight.data.destination)}}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                class="flex items-center gap-3 border border-blue-400 rounded-md px-3 py-1">
+                                                <span class="text-gray-700 text-lg">🍴</span>
+                                                <span class="text-gray-700 text-lg">✈️</span>
+                                                <span class="text-gray-700 text-lg">🧳</span>
+                                                <span class="text-gray-700 text-lg">💺</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <hr class="my-3 border-gray-200" />
+
+                                    <!-- baggage row -->
+                                    <div class="flex flex-wrap items-center gap-6 text-sm">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-2xl">🧳</span>
+                                            <div>
+                                                <span class="text-sm font-medium">Cabin Baggage:</span>
+                                                <span class="text-sm text-gray-600"> {{
+                                                    selectedFlight.data.cabin_baggage || (7 * passengers) + ' Kgs (' +
+                                                    passengers + ' pieces)' }} </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-2xl">💼</span>
+                                            <div>
+                                                <span class="text-sm font-medium">Check-In Baggage:</span>
+                                                <span class="text-sm text-gray-600"> {{
+                                                    selectedFlight.data.checkin_baggage || (15 * passengers) + ' Kgs ('
+                                                    + passengers + ' pieces)' }} </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- bottom callout -->
+                                    <div
+                                        class="mt-4 p-3 rounded border bg-blue-50 flex items-center justify-between text-xs">
+                                        <span>Got excess baggage? Don’t stress, buy extra check-in baggage allowance for
+                                            {{ getCityNameFromCode(selectedFlight.data.origin) }}-{{
+                                            getCityNameFromCode(selectedFlight.data.destination) }} at fab rates!</span>
+                                        <a href="#" class="text-blue-600 font-medium"
+                                            (click)="$event.preventDefault()">ADD BAGGAGE</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-xs text-gray-500 text-center mt-1">{{ selectedFlight.duration }}h</p>
                     </div>
 
-                    <div class="text-center">
-                        <p class="text-2xl font-bold">{{ selectedFlight.arrival_time | date:'HH:mm' }}</p>
-                        <p class="text-sm text-gray-600">{{ selectedFlight.origin }}</p>
+
+                    <!-- Cancellation & Date Change -->
+                    <div class="bg-purple-50 shadow-md p-6">
+                        <!-- Header -->
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-semibold text-md mb-4">Cancellation & Date Change Policy</span>
+                            <span class="text-md text-blue-400 mb-4">View Policy</span>
+                        </div>
+
+                        <!-- Timeline Values -->
+                        <div class="flex items-center justify-between mb-2 text-sm font-semibold">
+                            <span>₹ 2,849</span>
+                            <span>₹ 3,849</span>
+                            <span>₹ 8,262</span>
+                        </div>
+
+                        <!-- Gradient Timeline -->
+                        <div class="h-2 w-full rounded-full overflow-hidden mb-2">
+                            <div class="h-full w-full rounded-full"
+                                style="background: linear-gradient(to right, #22c55e, #eab308, #ef4444);">
+                            </div>
+                        </div>
+
+                        <!-- Timeline Labels -->
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-semibold">Now</span>
+                            <span>
+                                <span class="font-semibold">21 Oct</span><br>
+                                <span class="text-gray-500">20:00</span>
+                            </span>
+                            <span>
+                                <span class="font-semibold">22 Oct</span><br>
+                                <span class="text-gray-500">18:00</span>
+                            </span>
+                            <span>
+                                <span class="font-semibold">22 Oct</span><br>
+                                <span class="text-gray-500">20:00</span>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT: Fare Summary -->
+                <div class="bg-white shadow-md p-6 h-fit lg:col-span-1">
+                    <h3 class="text-2xl font-extrabold mb-4">Fare Summary</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Base Fare</span>
+                            <span>₹ {{ selectedFlight?.data?.price || 6900 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Dynamic Pricing</span>
+                            <span>₹ {{ selectedFlight?.data?.dynamic_price || 0}}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Taxes and Surcharges</span>
+                            <span>₹ {{ calculateSurcharges(selectedFlight?.data?.price) }}</span>
+                        </div>
+                        <hr>
+                        <div class="flex justify-between font-bold text-lg">
+                            <span>Total Amount</span>
+                            <span>₹ {{ selectedFlight?.data?.price + calculateSurcharges(selectedFlight?.data?.price + selectedFlight?.data?.dynamic_price) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Coupons -->
+                    <div class="mt-6 p-4 bg-yellow-50 border rounded">
+                        <h4 class="font-medium mb-2">Coupons and Offers</h4>
+                        <input type="text" placeholder="Enter coupon code" class="w-full border p-2 rounded text-sm">
+                        <a href="#" class="block text-blue-600 mt-2 text-sm">VIEW ALL COUPONS</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Booking Form Placeholder -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Passenger Information</h2>
-            <div class="text-center py-12">
-                <div class="text-gray-400 mb-4">
-                    <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                        </path>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">Booking Form Coming Soon</h3>
-                <p class="text-gray-600">This is where the passenger information form will be implemented.</p>
-            </div>
-        </div>
     </div>
-</div>

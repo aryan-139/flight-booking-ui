@@ -1,34 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { FlightResult } from '../services/flight.service';
+import { FlightService } from '../services/flight.service';
+import { popularDestinations } from '../utils/popular-destinations';
 
 @Component({
   selector: 'app-booking',
   standalone: true,
   imports: [CommonModule, NavbarComponent],
   templateUrl: './booking.component.html',
-  styleUrl: './booking.component.scss'
+  styleUrls: ['./booking.component.scss']
 })
 export class BookingComponent implements OnInit {
-  selectedFlight: FlightResult | null = null;
-
+  selectedFlight: any | null = null;
+  flight_id: string = '';
+  passengers: number = 0;
+  class: string = '';
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private flightService: FlightService
   ) { }
 
   ngOnInit(): void {
-    // Get flight data from navigation state
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state?.['selectedFlight']) {
-      this.selectedFlight = navigation.extras.state['selectedFlight'];
-      console.log('Received flight data:', this.selectedFlight);
-    }
+    this.route.params.subscribe(params => {
+      this.flight_id = params['flight_id'];
+      this.getFlightDetails();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.passengers = params['passengers'];
+      this.class = params['class'];
+    });
   }
 
-  goBack(): void {
-    this.router.navigate(['/search-flights']);
+  getFlightDetails() {
+    this.flightService.getFlightDetails(parseInt(this.flight_id)).subscribe((res: any) => {
+      if (res.success) {
+        this.selectedFlight = res;
+        console.log(this.selectedFlight);
+      }
+    });
+  }
+
+  getTotalFare(): number {
+    return 6900 + 1362; // static for now, can come from API later
+  }
+
+  getCityNameFromCode(code: string): string {
+    return popularDestinations.find(airport => airport.airport_code === code)?.city_name || '';
+  }
+  getAirportNameFromCode(code: string): string {
+    return popularDestinations.find(airport => airport.airport_code === code)?.airport_name || '';
+  }
+  formatDuration(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  }
+  formatTime(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
+  calculateSurcharges(price: number): number {
+    return price * 0.2;
   }
 }

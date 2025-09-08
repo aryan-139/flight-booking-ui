@@ -100,8 +100,8 @@ export class FlightService {
     /**
      * Get flight details by ID
      */
-    getFlightDetails(flightId: string): Observable<FlightResult> {
-        return this.http.get<FlightResult>(`${this.apiUrl}/details/${flightId}`)
+    getFlightDetails(flightId: number): Observable<FlightResult> {
+        return this.http.get<FlightResult>(`${this.apiUrl}/get-flight-by-id/${flightId}`)
             .pipe(
                 timeout(this.timeout),
                 retry(this.retryAttempts),
