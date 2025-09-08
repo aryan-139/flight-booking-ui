@@ -1,9 +1,12 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:3000/api',
-    flightApiUrl: 'http://localhost:3000/api/flight',
-    bookingApiUrl: 'http://localhost:3000/api/booking',
-    authApiUrl: 'http://localhost:3000/api/auth',
+    //apiUrl: 'http://localhost:3000/api',
+    //flightApiUrl: 'http://localhost:3000/api/flight',
+    apiUrl: 'https://flight-booking-engine.vercel.app/',
+    flightApiUrl: 'https://flight-booking-engine.vercel.app/flight',
+    bookingApiUrl: 'https://flight-booking-engine.vercel.app/api/booking',
+    //bookingApiUrl: 'http://localhost:3000/api/booking',
+    //authApiUrl: 'http://localhost:3000/api/auth',
     timeout: 30000, // 30 seconds
     retryAttempts: 3
 };
