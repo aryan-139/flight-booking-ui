@@ -7,9 +7,9 @@
             <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 ">
                 <!-- Loading Spinner -->
 
-
+                @if (isLoading) {
                 <!-- LEFT: Flight Details + Cancellation (Loading State) -->
-                <div *ngIf="isLoading" class="lg:col-span-3">
+                <div class="lg:col-span-3">
                     <!-- Flight Details Skeleton -->
                     <div class="bg-white shadow-md rounded-lg border border-gray-200 overflow-hidden">
                         <div class="flex">
@@ -89,7 +89,7 @@
                 </div>
 
                 <!-- RIGHT: Fare Summary (Loading State) -->
-                <div *ngIf="isLoading" class="lg:col-span-1">
+                <div class="lg:col-span-1">
                     <div class="bg-white shadow-md p-6 h-fit rounded-lg">
                         <div class="space-y-4">
                             <div class="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
@@ -116,7 +116,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- LEFT: Flight Details + Cancellation -->
+                } @else {
+                <!-- LEFT: Flight Details + Cancellation (Content) -->
                 <div class="lg:col-span-3">
 
                     <!-- Flight Details Card -->
@@ -272,7 +273,7 @@
 
 
                     <!-- Cancellation & Date Change -->
-                    <div class="bg-purple-50 shadow-md p-6">
+                    <div class="bg-purple-50 shadow-md p-6 mt-4">
                         <!-- Header -->
                         <div class="flex justify-between items-center mb-4">
                             <span class="font-semibold text-md mb-4">Cancellation & Date Change Policy</span>
@@ -281,9 +282,10 @@
 
                         <!-- Timeline Values -->
                         <div class="flex items-center justify-between mb-2 text-sm font-semibold">
-                            <span>₹ 2,849</span>
-                            <span>₹ 3,849</span>
-                            <span>₹ 8,262</span>
+                            <span>₹ {{ selectedFlight?.data?.price * 0.2 }}</span>
+                            <span>₹ {{selectedFlight?.data?.price * 0.5}}</span>
+                            <span>₹ {{ selectedFlight?.data?.price + calculateSurcharges(selectedFlight?.data?.price +
+                                selectedFlight?.data?.dynamic_price) }}</span>
                         </div>
 
                         <!-- Gradient Timeline -->
@@ -313,37 +315,44 @@
 
                 </div>
 
-                <!-- RIGHT: Fare Summary -->
-                <div class="bg-white shadow-md p-6 h-fit lg:col-span-1">
-                    <h3 class="text-2xl font-extrabold mb-4">Fare Summary</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span>Base Fare</span>
-                            <span>₹ {{ selectedFlight?.data?.price || 6900 }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Dynamic Pricing</span>
-                            <span>₹ {{ selectedFlight?.data?.dynamic_price || 0}}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Taxes and Surcharges</span>
-                            <span>₹ {{ calculateSurcharges(selectedFlight?.data?.price) }}</span>
-                        </div>
-                        <hr>
-                        <div class="flex justify-between font-bold text-lg">
-                            <span>Total Amount</span>
-                            <span>₹ {{ selectedFlight?.data?.price + calculateSurcharges(selectedFlight?.data?.price +
-                                selectedFlight?.data?.dynamic_price) }}</span>
-                        </div>
-                    </div>
 
-                    <!-- Coupons -->
-                    <div class="mt-6 p-4 bg-yellow-50 border rounded">
-                        <h4 class="font-medium mb-2">Coupons and Offers</h4>
-                        <input type="text" placeholder="Enter coupon code" class="w-full border p-2 rounded text-sm">
-                        <a href="#" class="block text-blue-600 mt-2 text-sm">VIEW ALL COUPONS</a>
+                <!-- RIGHT: Fare Summary (Content) -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white shadow-md p-6 h-fit rounded-lg" *ngIf="selectedFlight">
+                        <h3 class="text-2xl font-extrabold mb-4">Fare Summary</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Base Fare</span>
+                                <span>₹ {{ selectedFlight?.data?.price || 6900 }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Dynamic Pricing</span>
+                                <span>₹ {{ selectedFlight?.data?.dynamic_price || 0}}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Taxes and Surcharges</span>
+                                <span>₹ {{ calculateSurcharges(selectedFlight?.data?.price +
+                                    selectedFlight?.data?.dynamic_price) }}</span>
+                            </div>
+                            <hr>
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Total Amount</span>
+                                <span>₹ {{ selectedFlight?.data?.price + calculateSurcharges(selectedFlight?.data?.price
+                                    +
+                                    selectedFlight?.data?.dynamic_price) }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Coupons -->
+                        <div class="mt-6 p-4 bg-yellow-50 border rounded">
+                            <h4 class="font-medium mb-2">Coupons and Offers</h4>
+                            <input type="text" placeholder="Enter coupon code"
+                                class="w-full border p-2 rounded text-sm">
+                            <a href="#" class="block text-blue-600 mt-2 text-sm">VIEW ALL COUPONS</a>
+                        </div>
                     </div>
                 </div>
+                }
             </div>
         </div>
 
