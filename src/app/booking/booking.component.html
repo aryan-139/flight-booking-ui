@@ -507,16 +507,20 @@
                                         </div>
 
                                         <!-- Form Actions -->
-                                        <div class="flex justify-end space-x-3 mt-4">
+                                        <div class="flex justify-end space-x-4 mt-6">
+                                            <!-- Cancel Button -->
                                             <button (click)="resetNewPassengerForm()"
-                                                class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                                                class="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white font-medium rounded-full shadow-md hover:from-red-600 hover:to-orange-600 transition-all">
                                                 Cancel
                                             </button>
+
+                                            <!-- Add Passenger Button -->
                                             <button (click)="addNewPassenger()"
-                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium rounded-full shadow-md hover:from-blue-600 hover:to-blue-800 transition-all">
                                                 Add Passenger
                                             </button>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -568,6 +572,63 @@
                             </div>
                         </ng-template>
                     </div>
+
+                    <div class="mt-6 mb-12 flex flex-col items-center space-y-4">
+                        <!-- Booking Status Messages -->
+                        @if (bookingSuccess) {
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 max-w-md">
+                            <div class="flex items-center">
+                                <svg class="h-5 w-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="text-green-800 font-medium">Booking Confirmed Successfully!</span>
+                            </div>
+                        </div>
+                        }
+
+                        @if (bookingError) {
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md">
+                            <div class="flex items-center">
+                                <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="text-red-800 font-medium">{{ bookingError }}</span>
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Confirm Booking Button -->
+                        <button (click)="confirmBooking()"
+                            [disabled]="isBookingInProgress || selectedPassengers.length === 0 || selectedSeats.length === 0"
+                            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full hover:from-blue-600 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-colors flex items-center space-x-2">
+
+                            @if (isBookingInProgress) {
+                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                            <span>Creating Booking...</span>
+                            } @else {
+                            <span>Confirm Booking</span>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            }
+                        </button>
+
+                        <!-- Validation Messages -->
+                        @if (selectedPassengers.length === 0) {
+                        <p class="text-sm text-red-600">Please select passengers before confirming booking.</p>
+                        }
+                        @if (selectedPassengers.length > 0 && selectedSeats.length === 0) {
+                        <p class="text-sm text-red-600">Please select seats before confirming booking.</p>
+                        }
+                    </div>
+
+
+
 
                 </div>
 

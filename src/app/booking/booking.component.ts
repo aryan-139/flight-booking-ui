@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FlightService } from '../services/flight.service';
 import { PassengerService, Passenger, CreatePassengerRequest } from '../services/passenger.service';
+import { BookingService, BookingRequest } from '../services/booking.service';
 import { popularDestinations } from '../utils/popular-destinations';
 import { SeatSelectionComponent } from '../seat-selection/seat-selection.component';
 
@@ -42,6 +43,7 @@ export class BookingComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private bookingService: BookingService,
     private flightService: FlightService,
     private passengerService: PassengerService
   ) { }
@@ -185,6 +187,12 @@ export class BookingComponent implements OnInit {
   selectedSeatDetails: any[] = [];
   seatSelectionTotal: number = 0;
 
+  // Booking related properties
+  isBookingInProgress: boolean = false;
+  bookingSuccess: boolean = false;
+  bookingError: string | null = null;
+  bookingResponse: any = null;
+
   onSeatsSelected(seatData: { seats: string[], totalPrice: number, seatDetails: any[] }): void {
     this.selectedSeats = seatData.seats;
     this.selectedSeatDetails = seatData.seatDetails;
@@ -201,5 +209,72 @@ export class BookingComponent implements OnInit {
     const seatCost = this.seatSelectionTotal || 0;
 
     return baseFare + dynamicPrice + surcharges + seatCost;
+  }
+
+  confirmBooking(): void {
+    // Validate that passengers and seats are selected
+    if (this.selectedPassengers.length === 0) {
+      alert('Please select passengers before confirming booking.');
+      return;
+    }
+
+    if (this.selectedSeats.length === 0) {
+      alert('Please select seats before confirming booking.');
+      return;
+    }
+
+    this.isBookingInProgress = true;
+    this.bookingError = null;
+    this.bookingSuccess = false;
+
+    // Prepare the booking request object
+    const bookingRequest: BookingRequest = {
+      user_id: this.userId,
+      flight_id: parseInt(this.flight_id),
+      booking_type: "one-way",
+      passenger_info: this.selectedPassengers.map(p => p.id).filter(id => id !== undefined) as number[], // Use selected passenger IDs
+      payment_method: "card",
+      seat_numbers: this.buildSeatNumbersObject(),
+      special_requests: {
+        meal: "vegetarian", // This could be made dynamic based on user selection
+        wheelchair: false   // This could be made dynamic based on user selection
+      },
+      total_price: this.getTotalAmount(),
+      booking_source: "web",
+      promocode_used: "SAVE10" // This could be made dynamic based on user input
+    };
+
+    console.log('Creating booking with request:', bookingRequest);
+
+    // Use the booking service to create the booking
+    this.bookingService.createBooking(bookingRequest)
+      .subscribe({
+        next: (response) => {
+          console.log('Booking created successfully:', response);
+          this.bookingResponse = response;
+          this.bookingSuccess = true;
+          this.isBookingInProgress = false;
+
+          // Show success message or navigate to confirmation page
+          if (response.success) {
+            alert(`Booking confirmed! Booking ID: ${response.data?.booking_id || 'N/A'}`);
+          }
+        },
+        error: (error) => {
+          console.error('Error creating booking:', error);
+          this.bookingError = error.error?.message || 'Failed to create booking. Please try again.';
+          this.isBookingInProgress = false;
+          alert(`Booking failed: ${this.bookingError}`);
+        }
+      });
+  }
+
+  // Helper method to build seat numbers object
+  private buildSeatNumbersObject(): { [key: string]: string } {
+    const seatNumbers: { [key: string]: string } = {};
+    this.selectedSeats.forEach((seat, index) => {
+      seatNumbers[(index + 1).toString()] = seat;
+    });
+    return seatNumbers;
   }
 }
