@@ -17,6 +17,8 @@ export class BookingComponent implements OnInit {
   flight_id: string = '';
   passengers: number = 0;
   class: string = '';
+  isLoading: boolean = true;
+
   constructor(
     private route: ActivatedRoute,
     private flightService: FlightService
@@ -34,11 +36,19 @@ export class BookingComponent implements OnInit {
   }
 
   getFlightDetails() {
+    this.isLoading = true;
     this.flightService.getFlightDetails(parseInt(this.flight_id)).subscribe((res: any) => {
       if (res.success) {
         this.selectedFlight = res;
         console.log(this.selectedFlight);
       }
+      // Simulate loading time for better UX
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 1500);
+    }, (error) => {
+      console.error('Error fetching flight details:', error);
+      this.isLoading = false;
     });
   }
 
