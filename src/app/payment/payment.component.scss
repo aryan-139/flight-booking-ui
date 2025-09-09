@@ -1,0 +1,48 @@
+// Payment component styles
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Custom input focus styles
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+// Payment method selection styles
+input[type="radio"]:checked+div {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+// Sticky positioning for booking summary
+.sticky {
+    position: sticky;
+    top: 6rem;
+}
