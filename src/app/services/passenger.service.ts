@@ -45,6 +45,6 @@ export class PassengerService {
     }
 
     createPassenger(passenger: CreatePassengerRequest): Observable<any> {
-        return this.http.post(`${this.baseUrl}/passenger`, passenger);
+        return this.http.post(`${this.baseUrl}/api/passenger`, passenger);
     }
 }
