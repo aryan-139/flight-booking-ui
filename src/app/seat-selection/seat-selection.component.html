@@ -1,0 +1,146 @@
+<div class="bg-sky-100 min-h-screen flex flex-col items-center justify-center p-4 font-sans relative">
+
+    <!-- ✈️ Airplane Seat Map -->
+    <div class="w-full max-w-sm">
+        <!-- Cabin with seats -->
+        <div class="bg-slate-50 p-4 pt-6 rounded-t-3xl border-t border-gray-200">
+
+            <!-- Seat Labels -->
+            <div class="flex justify-between mb-4 px-1 text-sm font-semibold text-gray-500">
+                <div class="flex w-full justify-around">
+                    <span>A</span><span>B</span><span>C</span>
+                </div>
+                <div class="w-12"></div>
+                <div class="flex w-full justify-around">
+                    <span>D</span><span>E</span><span>F</span>
+                </div>
+            </div>
+
+            <!-- Seat Rows -->
+            <div *ngFor="let row of rows" class="flex items-center mb-3">
+                <div class="w-6 text-center text-gray-400 font-medium">{{ row.number }}</div>
+
+                <div class="flex-1 flex justify-around">
+                    <div *ngFor="let seat of row.seats.slice(0,3)">
+                        <div (click)="selectSeat(seat)"
+                            class="w-10 h-10 rounded-md flex items-center justify-center cursor-pointer relative"
+                            [ngClass]="{
+                      'bg-teal-200 text-teal-800': seat?.price === 0 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'bg-sky-200 text-sky-800': seat?.price > 0 && seat?.price <= 700 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'bg-purple-300 text-purple-800': seat?.price > 700 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'border-2 border-red-500': seat?.isExit,
+                      'border-2 border-black': seat?.isNonReclining,
+                      'bg-white border-2 border-gray-300': seat?.isUnavailable,
+                      'bg-blue-500 text-white': isSeatSelected(seat?.label)
+                   }">
+                            <!-- Seat Selected -->
+                            <svg *ngIf="isSeatSelected(seat?.label)" class="w-6 h-6" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+
+                            <!-- Price -->
+                            <span *ngIf="!seat.isUnavailable && !isSeatSelected(seat?.label)" class="text-xs font-bold">
+                                ₹{{ seat.price }}
+                            </span>
+
+                            <!-- Unavailable X -->
+                            <div *ngIf="seat.isUnavailable" class="absolute w-full h-full">
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 transform -rotate-45">
+                                </div>
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 transform rotate-45"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-6"></div>
+
+                <div class="flex-1 flex justify-around">
+                    <div *ngFor="let seat of row.seats.slice(3,6)">
+                        <div (click)="selectSeat(seat)"
+                            class="w-10 h-10 rounded-md flex items-center justify-center cursor-pointer relative"
+                            [ngClass]="{
+                      'bg-teal-200 text-teal-800': seat?.price === 0 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'bg-sky-200 text-sky-800': seat?.price > 0 && seat?.price <= 700 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'bg-purple-300 text-purple-800': seat?.price > 700 && !seat.isUnavailable && !isSeatSelected(seat?.label),
+                      'border-2 border-red-500': seat?.isExit,
+                      'border-2 border-black': seat?.isNonReclining,
+                      'bg-white border-2 border-gray-300': seat?.isUnavailable,
+                      'bg-blue-500 text-white': isSeatSelected(seat?.label)
+                   }">
+
+                            <!-- Seat Selected -->
+                            <svg *ngIf="isSeatSelected(seat?.label)" class="w-6 h-6" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+
+                            <!-- Price -->
+                            <span *ngIf="!seat.isUnavailable && !isSeatSelected(seat?.label)" class="text-xs font-bold">
+                                ₹{{ seat.price }}
+                            </span>
+
+                            <!-- Unavailable X -->
+                            <div *ngIf="seat.isUnavailable" class="absolute w-full h-full">
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 transform -rotate-45">
+                                </div>
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-400 transform rotate-45"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-6 text-center text-gray-400 font-medium">{{ row.number }}</div>
+            </div>
+        </div>
+
+        <!-- Selected Seats Summary -->
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-blue-800">Selected Seats</span>
+                    <span class="text-xs text-blue-600">{{ selectedSeats.length }}/{{ passengerCount }}</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span *ngFor="let seat of selectedSeats"
+                        class="px-2 py-1 bg-blue-200 text-blue-800 text-xs rounded-full font-medium">
+                        {{ seat }}
+                    </span>
+                    <span *ngIf="selectedSeats.length === 0" class="text-xs text-gray-500 italic">
+                        No seats selected
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend Section -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3 text-center">Seat Legend</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs text-gray-600">
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 rounded bg-teal-200 mr-1"></div>
+                    <span>Free</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 rounded bg-sky-200 mr-1"></div>
+                    <span>₹ 450-700</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 rounded bg-purple-300 mr-1"></div>
+                    <span>₹ 950</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 rounded border-2 border-red-500 mr-1"></div>
+                    <span>Exit Row</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 rounded border-2 border-black mr-1"></div>
+                    <span>Non Reclining</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

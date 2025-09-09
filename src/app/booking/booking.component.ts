@@ -6,11 +6,12 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { FlightService } from '../services/flight.service';
 import { PassengerService, Passenger, CreatePassengerRequest } from '../services/passenger.service';
 import { popularDestinations } from '../utils/popular-destinations';
+import { SeatSelectionComponent } from '../seat-selection/seat-selection.component';
 
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FormsModule],
+  imports: [CommonModule, NavbarComponent, FormsModule, SeatSelectionComponent],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.scss']
 })
@@ -21,6 +22,7 @@ export class BookingComponent implements OnInit {
   class: string = '';
   isLoading: boolean = true;
   userId: string = "dummy";
+  totalSeats: number = 0;
 
   // Passenger related properties
   existingPassengers: Passenger[] = [];
@@ -63,6 +65,7 @@ export class BookingComponent implements OnInit {
     this.flightService.getFlightDetails(parseInt(this.flight_id)).subscribe((res: any) => {
       if (res.success) {
         this.selectedFlight = res;
+        this.totalSeats = this.selectedFlight.data.total_seats;
         console.log(this.selectedFlight);
       }
       // Simulate loading time for better UX
@@ -176,5 +179,27 @@ export class BookingComponent implements OnInit {
 
   togglePassengerPanel(): void {
     this.isPassengerPanelExpanded = !this.isPassengerPanelExpanded;
+  }
+
+  selectedSeats: string[] = [];
+  selectedSeatDetails: any[] = [];
+  seatSelectionTotal: number = 0;
+
+  onSeatsSelected(seatData: { seats: string[], totalPrice: number, seatDetails: any[] }): void {
+    this.selectedSeats = seatData.seats;
+    this.selectedSeatDetails = seatData.seatDetails;
+    this.seatSelectionTotal = seatData.totalPrice;
+    console.log('Selected seats:', seatData);
+  }
+
+  getTotalAmount(): number {
+    if (!this.selectedFlight?.data) return 0;
+
+    const baseFare = this.selectedFlight.data.price || 6900;
+    const dynamicPrice = this.selectedFlight.data.dynamic_price || 0;
+    const surcharges = this.calculateSurcharges(baseFare + dynamicPrice);
+    const seatCost = this.seatSelectionTotal || 0;
+
+    return baseFare + dynamicPrice + surcharges + seatCost;
   }
 }
