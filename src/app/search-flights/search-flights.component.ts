@@ -67,6 +67,7 @@ export class SearchFlightsComponent implements OnInit {
   searchResults: FlightResult[] = [];
   isSearching = false;
   showResults = false;
+  isLoading = true; // For initial page load
 
   popularDestinations = popularDestinations;
 
@@ -89,6 +90,12 @@ export class SearchFlightsComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
+    // Scroll to top of page when component loads
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Add intentional 2-second delay for skeleton loader
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     this.searchForm.departureDate = new Date();
 
     // Load airports from API
@@ -108,6 +115,9 @@ export class SearchFlightsComponent implements OnInit {
     this.isRoundTrip = false;
     this.filteredFromCities = [...this.popularDestinations];
     this.filteredToCities = [...this.popularDestinations];
+
+    // Hide loading skeleton
+    this.isLoading = false;
   }
 
   private loadAirports(): void {
