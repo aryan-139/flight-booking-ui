@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { FlightService } from '../services/flight.service';
 import { PassengerService, Passenger, CreatePassengerRequest } from '../services/passenger.service';
@@ -43,6 +43,7 @@ export class BookingComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private bookingService: BookingService,
     private flightService: FlightService,
     private passengerService: PassengerService
@@ -255,9 +256,9 @@ export class BookingComponent implements OnInit {
           this.bookingSuccess = true;
           this.isBookingInProgress = false;
 
-          // Show success message or navigate to confirmation page
+          // Navigate to payment page on successful booking
           if (response.success) {
-            alert(`Booking confirmed! Booking ID: ${response.data?.booking_id || 'N/A'}`);
+            this.router.navigate(['/payment', response.data?.booking_id]);
           }
         },
         error: (error) => {
