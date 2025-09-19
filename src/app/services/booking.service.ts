@@ -56,7 +56,7 @@ export class BookingService {
      * @returns Observable<BookingResponse>
      */
     createBooking(bookingRequest: BookingRequest): Observable<BookingResponse> {
-        return this.http.post<BookingResponse>(`${this.baseUrl}/api/booking`, bookingRequest);
+        return this.http.post<BookingResponse>(`${this.baseUrl}/booking`, bookingRequest);
     }
 
     /**
@@ -65,7 +65,7 @@ export class BookingService {
      * @returns Observable<BookingResponse>
      */
     getBookingById(bookingId: number): Observable<BookingResponse> {
-        return this.http.get<BookingResponse>(`${this.baseUrl}/api/booking/${bookingId}`);
+        return this.http.get<BookingResponse>(`${this.baseUrl}/booking/${bookingId}`);
     }
 
     /**
@@ -75,7 +75,7 @@ export class BookingService {
      * @returns Observable<BookingResponse>
      */
     updateBooking(bookingId: number, updateData: Partial<BookingRequest>): Observable<BookingResponse> {
-        return this.http.put<BookingResponse>(`${this.baseUrl}/api/booking/${bookingId}`, updateData);
+        return this.http.put<BookingResponse>(`${this.baseUrl}/booking/${bookingId}`, updateData);
     }
 
     /**
@@ -84,7 +84,7 @@ export class BookingService {
      * @returns Observable<BookingResponse>
      */
     cancelBooking(bookingId: number): Observable<BookingResponse> {
-        return this.http.delete<BookingResponse>(`${this.baseUrl}/api/booking/${bookingId}`);
+        return this.http.delete<BookingResponse>(`${this.baseUrl}/booking/${bookingId}`);
     }
 
     /**
@@ -93,7 +93,7 @@ export class BookingService {
      * @returns Observable<BookingResponse[]>
      */
     getUserBookings(userId: string): Observable<BookingResponse[]> {
-        return this.http.get<BookingResponse[]>(`${this.baseUrl}/api/bookings/user/${userId}`);
+        return this.http.get<BookingResponse[]>(`${this.baseUrl}/bookings/user/${userId}`);
     }
 
     /**
@@ -103,6 +103,6 @@ export class BookingService {
      * @returns Observable<BookingResponse>
      */
     processPayment(bookingId: number, paymentData: any): Observable<BookingResponse> {
-        return this.http.post<BookingResponse>(`${this.baseUrl}/api/booking/${bookingId}/payment`, paymentData);
+        return this.http.post<BookingResponse>(`${this.baseUrl}/booking/${bookingId}/payment`, paymentData);
     }
 }
