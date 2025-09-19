@@ -41,10 +41,10 @@ export class PassengerService {
     constructor(private http: HttpClient) { }
 
     getPassengersByUserId(userId: string): Observable<PassengerResponse> {
-        return this.http.get<PassengerResponse>(`${this.baseUrl}/passenger/user/${userId}`);
+        return this.http.get<PassengerResponse>(`${this.baseUrl}/api/passenger/user/${userId}`);
     }
 
     createPassenger(passenger: CreatePassengerRequest): Observable<any> {
-        return this.http.post(`${this.baseUrl}/passenger`, passenger);
+        return this.http.post(`${this.baseUrl}/api/passenger`, passenger);
     }
 }
